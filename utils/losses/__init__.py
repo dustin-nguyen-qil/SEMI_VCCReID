@@ -51,6 +51,8 @@ def build_losses(config, num_train_clothes):
                              momentum=config.LOSS.MOMENTUM, scale=config.LOSS.CLA_S, epsilon=config.LOSS.EPSILON)
     else:
         raise KeyError("Invalid clothing classification loss: '{}'".format(config.LOSS.CAL))
+    
+    shape_loss = nn.MSELoss()
 
-    return criterion_cla, criterion_pair, criterion_clothes, criterion_cal
+    return criterion_cla, criterion_pair, criterion_clothes, criterion_cal, shape_loss
 

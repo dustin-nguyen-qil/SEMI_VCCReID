@@ -5,29 +5,32 @@ from torch import nn, optim
 import numpy as np
 import torch
 from torch.optim import lr_scheduler
-from cfg.model_1 import CONFIG
-from datasets import build_dataloader
+from config import CONFIG
+from datasets.dataset_loader import build_dataloader
 from models import build_models
-from train import train
 from utils.losses import build_losses
 from utils.utils import get_logger, save_checkpoint
+from torchmetrics import functional as FM
+from models.vid_resnet import C2DResNet50
 
 class Baseline(LightningModule):
     def __init__(self) -> None:
         super(Baseline).__init__()
 
         self.trainloader, self.queryloader, self.galleryloader, self.dataset, self.train_sampler \
-            = build_dataloader(CONFIG)
+            = build_dataloader()
         
-        pid2clothes = torch.from_numpy(self.dataset.pid2clothes)
+        # pid2clothes = torch.from_numpy(self.dataset.pid2clothes)
 
         # Build model
         self.appearance_model, self.shape_model, self.fusion_net, self.identity_classifier, self.clothes_classifier = build_models(
-            CONFIG, self.dataset.num_train_pids, self.dataset.num_train_clothes)
+            CONFIG, self.dataset.num_pids, self.dataset.num_clothes)
         # Build identity classification loss, pairwise loss, clothes classificaiton loss
         # and adversarial loss.
-        self.criterion_cla, self.criterion_pair, self.criterion_clothes, self.criterion_adv = build_losses(
-            CONFIG, self.dataset.num_train_clothes)
+        self.criterion_cla, self.criterion_pair, self.criterion_clothes, self.criterion_adv, self.shape_loss = build_losses(
+            CONFIG, self.dataset.num_clothes)
+
+        self.training_step_outputs = []
         
     def configure_optimizers(self):
         optimizer = optim.Adam(
@@ -45,6 +48,9 @@ class Baseline(LightningModule):
     def train_dataloader(self):
         return self.trainloader
     
+    def on_train_epoch_start(self) -> None:
+        self.train_sampler.set_epoch(self.current_epoch)
+    
     def app_forward(self, images):
         appearance_feature = self.appearance_model(images)
         return appearance_feature
@@ -58,8 +64,37 @@ class Baseline(LightningModule):
         return final_feature
     
     def training_step(self, batch, batch_idx):
-        imgs, pids, camids, clothes_ids = batch 
+        imgs, pids, camids, clothes_ids, xcs, betas = batch 
         appearance_feature = self.app_forward(imgs)
-        shape_feature = self.shape_forward()
-        return 
+        if CONFIG.TRAIN.WITH_SHAPE:
+            shape_feature = self.shape_forward(xcs)
+            fused_feature = self.fusion(appearance_feature, shape_feature)
+            features = fused_feature
+        else:
+            features = appearance_feature
+
+        logits = self.identity_classifier(features)
+        id_loss = self.criterion_cla(logits, pids)
+        pair_loss = self.criterion_pair(features, pids)
+
+        loss = id_loss + 0.5*pair_loss
+        acc = FM.accuracy(logits, pids, 'multiclass', average='macro', num_classes=self.dataset.num_pids)
+        self.log('train_acc', acc, on_step=True, on_epoch=True, prog_bar=True, logger=True)
+        self.log('train_loss', loss, on_step=True, on_epoch=True, prog_bar=True, logger=True)
+
+        self.training_step_outputs.append(loss)
+        return loss 
+    
+    def on_train_epoch_end(self):
+        epoch_loss = sum(self.training_step_outputs) / len(self.training_step_outputs)
+        self.log('epoch_loss', epoch_loss)
+        self.training_step_outputs.clear()
+
+class Inference(nn.Module):
+    def __init__(self, config) -> None:
+        super(Inference).__init__()
+        self.model = C2DResNet50(config)
+    
+    def forward(self, imgs):
+        return self.model(imgs)
 
