@@ -6,10 +6,21 @@ import os.path as osp
 import random
 import shutil
 import sys
-
+from config import CONFIG
 import numpy as np
 import torch
 
+def build_model_name():
+    model_name = f'{CONFIG.DATA.DATASET}_{CONFIG.TRAIN.MAX_EPOCH}_{CONFIG.DATA.TRAIN_BATCH}_{CONFIG.TRAIN.OPTIMIZER.LR}'
+    if CONFIG.TRAIN.WITH_SHAPE:
+        model_name += '_shape'
+    if CONFIG.DATA.USE_SAMPLER:
+        model_name += '_sampler'
+    if CONFIG.DATA.TRAIN_DENSE:
+        model_name += '_dense'
+    # if CONFIG.DATA.TRAIN_DENSE:
+    #     model_name += '_sampler'
+    return model_name
 
 def set_seed(seed=None):
     if seed is None:

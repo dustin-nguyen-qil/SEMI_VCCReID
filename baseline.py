@@ -15,15 +15,19 @@ from models.vid_resnet import C2DResNet50
 
 class Baseline(LightningModule):
     def __init__(self) -> None:
-        super(Baseline).__init__()
+        super(Baseline, self).__init__()
 
-        self.trainloader, self.queryloader, self.galleryloader, self.dataset, self.train_sampler \
-            = build_dataloader()
+        if CONFIG.DATA.USE_SAMPLER:
+            self.trainloader, self.queryloader, self.galleryloader, self.dataset, self.train_sampler \
+                = build_dataloader()
+        else:
+            self.trainloader, self.queryloader, self.galleryloader, self.dataset \
+                = build_dataloader()
         
         # pid2clothes = torch.from_numpy(self.dataset.pid2clothes)
 
         # Build model
-        self.appearance_model, self.shape_model, self.fusion_net, self.identity_classifier, self.clothes_classifier = build_models(
+        self.appearance_model, self.shape_model, self.fusion_net, self.identity_classifier = build_models(
             CONFIG, self.dataset.num_pids, self.dataset.num_clothes)
         # Build identity classification loss, pairwise loss, clothes classificaiton loss
         # and adversarial loss.
@@ -31,6 +35,7 @@ class Baseline(LightningModule):
             CONFIG, self.dataset.num_clothes)
 
         self.training_step_outputs = []
+        self.save_hyperparameters()
         
     def configure_optimizers(self):
         optimizer = optim.Adam(
@@ -49,7 +54,10 @@ class Baseline(LightningModule):
         return self.trainloader
     
     def on_train_epoch_start(self) -> None:
-        self.train_sampler.set_epoch(self.current_epoch)
+        if CONFIG.DATA.USE_SAMPLER:
+            self.train_sampler.set_epoch(self.current_epoch)
+        else:
+            pass
     
     def app_forward(self, images):
         appearance_feature = self.appearance_model(images)
@@ -92,7 +100,7 @@ class Baseline(LightningModule):
 
 class Inference(nn.Module):
     def __init__(self, config) -> None:
-        super(Inference).__init__()
+        super(Inference, self).__init__()
         self.model = C2DResNet50(config)
     
     def forward(self, imgs):

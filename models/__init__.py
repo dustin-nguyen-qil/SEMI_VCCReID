@@ -18,9 +18,10 @@ def build_models(config, num_ids, num_clothes):
     if config.TRAIN.WITH_SHAPE:
         identity_classifier = Classifier(feature_dim=config.MODEL.FEATURE_DIM,
                                                 num_classes=num_ids)
-        clothes_classifier = NormalizedClassifier(feature_dim=config.MODEL.FEATURE_DIM,
-                                                    num_classes=num_clothes)
+        # clothes_classifier = NormalizedClassifier(feature_dim=config.MODEL.FEATURE_DIM,
+        #                                             num_classes=num_clothes)
     else:
         identity_classifier = Classifier(feature_dim=2048, num_classes=num_ids)
-            
-    return appearance_model, shape_model, fusion, identity_classifier, clothes_classifier
+        # clothes_classifier = None
+
+    return appearance_model, shape_model, fusion, identity_classifier#, clothes_classifier

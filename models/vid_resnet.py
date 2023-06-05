@@ -26,7 +26,7 @@ class Bottleneck3D(nn.Module):
                  inflate_time: bool = False,
                  temperature: int = 4,
                  contrastive_att: bool = True):
-        super().__init__()
+        super(Bottleneck3D, self).__init__()
         self.conv1 = inflate.inflate_conv(bottleneck2d.conv1, time_dim=1)
         self.bn1 = inflate.inflate_batch_norm(bottleneck2d.bn1)
         if inflate_time is True:
@@ -78,7 +78,7 @@ class Bottleneck3D(nn.Module):
 class ResNet503D(nn.Module):
 
     def __init__(self, config, block, c3d_idx, nl_idx, **kwargs):
-        super().__init__()
+        super(ResNet503D, self).__init__()
         self.block = block
         self.temperature = config.MODEL.AP3D.TEMPERATURE
         self.contrastive_att = config.MODEL.AP3D.CONTRACTIVE_ATT

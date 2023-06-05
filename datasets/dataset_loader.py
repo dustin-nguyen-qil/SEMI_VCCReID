@@ -69,7 +69,6 @@ def build_dataloader():
         trainloader = DataLoader(
             train_dataset, 
             batch_size=config.DATA.TRAIN_BATCH,
-            sampler=sampler,
             num_workers=config.DATA.NUM_WORKERS,
             pin_memory=True, 
             drop_last=True
@@ -112,4 +111,7 @@ def build_dataloader():
         drop_last=False
     )
 
-    return trainloader, queryloader, gallery, train_dataset, sampler
+    if config.DATA.USE_SAMPLER:
+        return trainloader, queryloader, gallery, train_dataset, sampler
+    else:
+        return trainloader, queryloader, gallery, train_dataset

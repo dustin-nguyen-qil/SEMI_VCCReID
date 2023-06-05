@@ -7,8 +7,8 @@ from torchvision import transforms as T
 class CONFIG:
     @dataclass
     class METADATA:
-        OUTPUT = 'work_space/logs'
-        MODEL_NAME = '...'
+        LOG_PATH = 'work_space/logs'
+        SAVE_PATH = 'work_space/save'
 
     @dataclass
     class DATA:
@@ -43,7 +43,7 @@ class CONFIG:
         RES4_STRIDE = 1
         FEATURE_DIM = 512
         AGG = 'SUM'
-        RESUME = ''  # add checkpoint path here
+        
 
     @dataclass
     class LOSS:
@@ -76,5 +76,6 @@ class CONFIG:
         WITH_SHAPE = False
         START_EPOCH = 0
         MAX_EPOCH = 150
+        RESUME = None  # add checkpoint path here
         # START_EPOCH_CC = 50
         # START_EPOCH_ADV = 50
