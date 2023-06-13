@@ -21,7 +21,8 @@ trainer = Trainer(
     accelerator='gpu',
     max_epochs=CONFIG.TRAIN.MAX_EPOCH,
     callbacks=[model_checkpoint, early_stopping],
-    logger=logger
+    logger=logger,
+    log_every_n_steps=1
 )
 
 if CONFIG.TRAIN.RESUME is not None:

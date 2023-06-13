@@ -14,7 +14,7 @@ class CONFIG:
     class DATA:
         ROOT = 'data'
         DATASET = 'ccvid' # vccr
-        USE_SAMPLER = False
+        USE_SAMPLER = True
         SAMPLING_STEP = 64
         NUM_WORKERS = 4
         HEIGHT = 256
@@ -22,7 +22,7 @@ class CONFIG:
         TRAIN_BATCH = 32
         TEST_BATCH = 128
         NUM_INSTANCES = 4
-        TRAIN_DENSE = False
+        TRAIN_DENSE = True
 
     @dataclass
     class AUG:
