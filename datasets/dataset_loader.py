@@ -1,5 +1,5 @@
 from torch.utils.data import DataLoader
-from datasets.dataset import VideoDataset
+from datasets.dataset import VideoDataset, TestDataset
 from config import CONFIG as config
 import os.path as osp
 import datasets.spatial_transforms as ST
@@ -50,8 +50,7 @@ def build_dataloader():
         train_data_path, 
         st_train, 
         tt_train, 
-        dense_sampling=config.DATA.TRAIN_DENSE,
-        train=True, 
+        dense_sampling=config.DATA.TRAIN_DENSE
         )
     
     if config.DATA.USE_SAMPLER:
@@ -68,6 +67,7 @@ def build_dataloader():
     else:
         trainloader = DataLoader(
             train_dataset, 
+            shuffle=True,
             batch_size=config.DATA.TRAIN_BATCH,
             num_workers=config.DATA.NUM_WORKERS,
             pin_memory=True, 
@@ -79,19 +79,17 @@ def build_dataloader():
     query_data_path = osp.join(config.DATA.ROOT, config.DATA.DATASET, 'query.pkl')
     gallery_data_path = osp.join(config.DATA.ROOT, config.DATA.DATASET, 'gallery.pkl')
 
-    query = VideoDataset(
+    query = TestDataset(
         query_data_path,
         spatial_transform=st_test,
         temporal_transform=tt_test,
-        train=False,
         seq_len=config.AUG.SEQ_LEN,
         stride = config.AUG.SAMPLING_STRIDE
     )
-    gallery = VideoDataset(
+    gallery = TestDataset( 
         gallery_data_path,
         spatial_transform=st_test,
         temporal_transform=tt_test,
-        train=False,
         seq_len=config.AUG.SEQ_LEN,
         stride = config.AUG.SAMPLING_STRIDE
     )
@@ -103,7 +101,7 @@ def build_dataloader():
         pin_memory=True, 
         drop_last=False
     )
-    queryloader = DataLoader(
+    galleryloader = DataLoader(
         gallery, 
         batch_size=config.DATA.TEST_BATCH, 
         num_workers=config.DATA.NUM_WORKERS,
@@ -112,6 +110,6 @@ def build_dataloader():
     )
 
     if config.DATA.USE_SAMPLER:
-        return trainloader, queryloader, gallery, train_dataset, sampler
+        return trainloader, queryloader, galleryloader, train_dataset, sampler
     else:
-        return trainloader, queryloader, gallery, train_dataset
+        return trainloader, queryloader, galleryloader, train_dataset

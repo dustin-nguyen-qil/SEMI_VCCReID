@@ -63,7 +63,17 @@ def densesampling_for_trainingset(dataset, sampling_step=64):
     '''
     new_dataset = []
     for item in dataset:
-        (pid, camid, clothes_id, img_paths, xcs, betas, joints3d, cam, pose) = list(item.values())
+        # (pid, camid, clothes_id, img_paths, xcs, betas, joints3d, cam, pose) = list(item.values())
+        pid = item['p_id']
+        camid = item['cam_id']
+        clothes_id = item['clothes_id']
+        img_paths = item['img_paths']
+        xcs = item['shape_1024']
+        betas = item['betas']
+        joints3d = item['joints3d']
+        pose = item['pose']
+        cam = item['cam']
+        
         if sampling_step != 0:
             num_sampling = len(img_paths) // sampling_step
             if num_sampling == 0:
@@ -97,7 +107,11 @@ def recombination_for_testset(dataset, seq_len=16, stride=4):
         '''
         new_dataset = []
         vid2clip_index = np.zeros((len(dataset), 2), dtype=int)
-        for idx, (img_paths, pid, camid, clothes_id) in enumerate(dataset):
+        for idx, item in enumerate(dataset):
+            pid = item['p_id']
+            img_paths = item['img_paths']
+            camid = item['cam_id']
+            clothes_id = item['clothes_id']
             # start index
             vid2clip_index[idx, 0] = len(new_dataset)
             # process the sequence that can be divisible by seq_len*stride

@@ -6,12 +6,6 @@ from torch import nn
 
 class TripletLoss(nn.Module):
     """Triplet loss with hard positive/negative mining.
-
-    Reference:
-    Hermans et al. In Defense of the Triplet Loss for Person Re-Identification. arXiv:1703.07737.
-
-    Code imported from https://github.com/Cysu/open-reid/blob/master/reid/loss/triplet.py.
-
     Args:
         margin (float): margin for triplet.
     """

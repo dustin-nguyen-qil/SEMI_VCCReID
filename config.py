@@ -7,7 +7,7 @@ from torchvision import transforms as T
 class CONFIG:
     @dataclass
     class METADATA:
-        LOG_PATH = 'work_space/logs'
+        LOG_PATH = 'work_space'
         SAVE_PATH = 'work_space/save'
 
     @dataclass
@@ -15,14 +15,15 @@ class CONFIG:
         ROOT = 'data'
         DATASET = 'ccvid' # vccr
         USE_SAMPLER = True
+        TRAIN_DENSE = True
+        TRAIN_BATCH = 16
+
         SAMPLING_STEP = 64
         NUM_WORKERS = 4
         HEIGHT = 256
         WIDTH = 128
-        TRAIN_BATCH = 32
         TEST_BATCH = 128
         NUM_INSTANCES = 4
-        TRAIN_DENSE = True
 
     @dataclass
     class AUG:
