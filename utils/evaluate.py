@@ -46,8 +46,8 @@ def extract_vid_feature(
     clip_features = torch.cat(clip_features, 0)
 
     # Gather samples from different GPUs
-    clip_features, clip_pids, clip_camids, clip_clothes_ids = \
-        concat_all_gather([clip_features, clip_pids, clip_camids, clip_clothes_ids], data_length)
+    # clip_features, clip_pids, clip_camids, clip_clothes_ids = \
+    #     concat_all_gather([clip_features, clip_pids, clip_camids, clip_clothes_ids], data_length)
 
     # Use the averaged feature of all clips split from a video as the representation of this original full-length video
     features = torch.zeros(len(vid2clip_index), clip_features.size(1)).cuda()

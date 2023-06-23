@@ -2,14 +2,12 @@ from typing import Any
 from pytorch_lightning import LightningModule
 from pytorch_lightning.utilities.types import STEP_OUTPUT, TRAIN_DATALOADERS
 from torch import nn, optim
-import numpy as np
 import torch
 from torch.optim import lr_scheduler
 from config import CONFIG
 from datasets.dataset_loader import build_trainloader
 from models import build_models
 from utils.losses import build_losses
-from utils.utils import get_logger, save_checkpoint
 from torchmetrics import functional as FM
 from models.vid_resnet import C2DResNet50
 

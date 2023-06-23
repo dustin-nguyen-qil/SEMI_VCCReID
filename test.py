@@ -23,7 +23,7 @@ def test(model, queryloader, galleryloader, query, gallery):
         vid2clip_index=query.vid2clip_index,
         data_length=len(query.dataset),
         logger=logger)
-    print('======== Extracting query features ========')
+    print('======== Extracting gallery features ========')
     gallery_features, gallery_pids, gallery_camids, gallery_clothes_ids = extract_vid_feature(
         model,
         galleryloader,
