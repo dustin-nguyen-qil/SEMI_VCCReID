@@ -1,5 +1,5 @@
 from typing import List, Tuple, Type, Union
-
+from tqdm.auto import tqdm
 import torch
 import torch.nn.functional as F
 from torch import distributed as dist
@@ -33,7 +33,7 @@ def extract_vid_feature(
     clip_features, clip_pids, clip_camids, clip_clothes_ids = [], torch.tensor(
         []), torch.tensor([]), torch.tensor([])
     for batch_idx, (vids, batch_pids, batch_camids,
-                    batch_clothes_ids) in enumerate(dataloader):
+                    batch_clothes_ids) in enumerate(tqdm(dataloader)):
         if (batch_idx + 1) % 200 == 0:
             logger.info("{}/{}".format(batch_idx + 1, len(dataloader)))
         vids = vids.cuda()

@@ -14,8 +14,8 @@ class CONFIG:
     class DATA:
         ROOT = 'data'
         DATASET = 'ccvid' # vccr
-        USE_SAMPLER = True
-        TRAIN_DENSE = True
+        USE_SAMPLER = False
+        TRAIN_DENSE = False
         TRAIN_BATCH = 16
 
         SAMPLING_STEP = 64

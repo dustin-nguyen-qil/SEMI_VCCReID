@@ -6,7 +6,7 @@ import numpy as np
 import torch
 from torch.optim import lr_scheduler
 from config import CONFIG
-from datasets.dataset_loader import build_dataloader
+from datasets.dataset_loader import build_trainloader
 from models import build_models
 from utils.losses import build_losses
 from utils.utils import get_logger, save_checkpoint
@@ -18,11 +18,9 @@ class Baseline(LightningModule):
         super(Baseline, self).__init__()
 
         if CONFIG.DATA.USE_SAMPLER:
-            self.trainloader, self.queryloader, self.galleryloader, self.dataset, self.train_sampler \
-                = build_dataloader()
+            self.trainloader, self.dataset, self.train_sampler = build_trainloader()
         else:
-            self.trainloader, self.queryloader, self.galleryloader, self.dataset \
-                = build_dataloader()
+            self.trainloader, self.dataset = build_trainloader()
         
         # pid2clothes = torch.from_numpy(self.dataset.pid2clothes)
 
@@ -101,8 +99,8 @@ class Baseline(LightningModule):
 class Inference(nn.Module):
     def __init__(self, config) -> None:
         super(Inference, self).__init__()
-        self.model = C2DResNet50(config)
+        self.appearance_model = C2DResNet50(config)
     
     def forward(self, imgs):
-        return self.model(imgs)
+        return self.appearance_model(imgs)
 

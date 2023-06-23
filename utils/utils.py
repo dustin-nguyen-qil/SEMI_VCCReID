@@ -18,8 +18,7 @@ def build_model_name():
         model_name += '_sampler'
     if CONFIG.DATA.TRAIN_DENSE:
         model_name += '_dense'
-    # if CONFIG.DATA.TRAIN_DENSE:
-    #     model_name += '_sampler'
+    model_name += '.pth'
     return model_name
 
 def set_seed(seed=None):

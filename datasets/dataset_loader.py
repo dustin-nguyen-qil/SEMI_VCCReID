@@ -37,16 +37,16 @@ def build_transforms():
 
     return spatial_transform_train, spatial_transform_test, temporal_transform_train, temporal_transform_test
 
-def build_dataloader():
+st_train, st_test, tt_train, tt_test = build_transforms()
+
+def build_trainloader():
 
     """
     Build Train Loader
     """
     train_data_path = osp.join(config.DATA.ROOT, config.DATA.DATASET, 'train.pkl')
 
-    st_train, st_test, tt_train, tt_test = build_transforms()
-
-    train_dataset = VideoDataset(
+    train = VideoDataset(
         train_data_path, 
         st_train, 
         tt_train, 
@@ -54,10 +54,10 @@ def build_dataloader():
         )
     
     if config.DATA.USE_SAMPLER:
-        sampler = RandomIdentitySampler(train_dataset.dataset, config.DATA.NUM_INSTANCES)
+        sampler = RandomIdentitySampler(train.dataset, config.DATA.NUM_INSTANCES)
 
         trainloader = DataLoader(
-            train_dataset, 
+            train, 
             batch_size=config.DATA.TRAIN_BATCH,
             sampler=sampler,
             num_workers=config.DATA.NUM_WORKERS,
@@ -66,13 +66,19 @@ def build_dataloader():
         )
     else:
         trainloader = DataLoader(
-            train_dataset, 
+            train, 
             shuffle=True,
             batch_size=config.DATA.TRAIN_BATCH,
             num_workers=config.DATA.NUM_WORKERS,
             pin_memory=True, 
             drop_last=True
         )
+    if config.DATA.USE_SAMPLER:
+        return trainloader, train, sampler
+    else:
+        return trainloader, train
+
+def build_testloader():
     """
     Build query and gallery loader
     """
@@ -86,6 +92,7 @@ def build_dataloader():
         seq_len=config.AUG.SEQ_LEN,
         stride = config.AUG.SAMPLING_STRIDE
     )
+
     gallery = TestDataset( 
         gallery_data_path,
         spatial_transform=st_test,
@@ -109,7 +116,4 @@ def build_dataloader():
         drop_last=False
     )
 
-    if config.DATA.USE_SAMPLER:
-        return trainloader, queryloader, galleryloader, train_dataset, sampler
-    else:
-        return trainloader, queryloader, galleryloader, train_dataset
+    return queryloader, galleryloader, query, gallery

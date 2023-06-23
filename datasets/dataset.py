@@ -119,7 +119,7 @@ class TestDataset(Dataset):
         self.spatial_transform = spatial_transform
         self.temporal_transform = temporal_transform
         self.loader = get_loader
-        self.dataset, _ = recombination_for_testset(data, seq_len, stride)
+        self.dataset, self.vid2clip_index = recombination_for_testset(data, seq_len, stride)
 
     def __len__(self):
         return len(self.dataset)
