@@ -10,6 +10,28 @@ from config import CONFIG
 import numpy as np
 import torch
 
+from copy import deepcopy
+from typing import Any
+
+from torch import nn
+
+
+def is_list_or_tuple(x: Any) -> bool:
+    return isinstance(x, (list, tuple))
+
+
+def clones(module: Any, N: int) -> nn.ModuleList:
+    "Produce N identical layers."
+    return nn.ModuleList([deepcopy(module) for _ in range(N)])
+
+
+def RmBN2dAffine(model):
+    for m in model.modules():
+        if isinstance(m, nn.BatchNorm2d):
+            m.weight.requires_grad = False
+            m.bias.requires_grad = False
+
+
 def build_model_name():
     model_name = f'{CONFIG.DATA.DATASET}_{CONFIG.TRAIN.MAX_EPOCH}_{CONFIG.DATA.TRAIN_BATCH}_{CONFIG.TRAIN.OPTIMIZER.LR}'
     if CONFIG.TRAIN.WITH_SHAPE:

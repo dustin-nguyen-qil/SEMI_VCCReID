@@ -13,7 +13,7 @@ class CONFIG:
     @dataclass
     class DATA:
         ROOT = 'data'
-        DATASET = 'ccvid' # vccr
+        DATASET = 'vccr' # vccr
         USE_SAMPLER = False
         TRAIN_DENSE = False
         TRAIN_BATCH = 16
@@ -42,8 +42,32 @@ class CONFIG:
 
         NAME = 'c2dres50'
         RES4_STRIDE = 1
-        FEATURE_DIM = 512
+        APP_FEATURE_DIM = 2048
+        FINAL_FEATURE_DIM = 512
         AGG = 'SUM'
+        if AGG == 'SUM':
+            AGG_FEATURE_DIM = 2 * FINAL_FEATURE_DIM
+        else:
+            AGG_FEATURE_DIM = FINAL_FEATURE_DIM
+
+    @dataclass
+    class GAITSET:
+        IN_CHANNELS = [1, 32, 64, 128]
+        SEQUENCE_LENGTH = [[4, 4]]
+
+        @dataclass
+        class SEPARATE_FC:
+            PART_NUM = 62
+            IN_CHANNELS = 128
+            OUT_CHANNELS = 256
+
+        BIN_NUM = [16, 8, 4, 2, 1]
+
+
+    @dataclass
+    class DSA:
+        NUM_FRAME = 8
+        NUM_SHAPE_PARAMETERS = 10
         
 
     @dataclass
@@ -53,7 +77,7 @@ class CONFIG:
         CLA_M = 0.
         CLOTHES_CLA_LOSS = 'cosface'
         PAIR_LOSS = 'triplet'
-        PAIR_LOSS_WEIGHT = 0.0
+        PAIR_LOSS_WEIGHT = 0.5
         PAIR_S = 16.
         PAIR_M = 0.3
         CAL = 'cal'
@@ -71,7 +95,7 @@ class CONFIG:
         @dataclass
         class OPTIMIZER:
             NAME = 'adam'
-            LR = 0.00035
+            LR = 0.0035
             WEIGHT_DECAY = 5e-4
 
         WITH_SHAPE = False

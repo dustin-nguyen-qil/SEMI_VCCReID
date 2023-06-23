@@ -81,7 +81,7 @@ class Baseline(LightningModule):
         id_loss = self.criterion_cla(logits, pids)
         pair_loss = self.criterion_pair(features, pids)
 
-        loss = id_loss + 0.5*pair_loss
+        loss = id_loss + pair_loss * CONFIG.LOSS.PAIR_LOSS_WEIGHT
         acc = FM.accuracy(logits, pids, 'multiclass', average='macro', num_classes=self.dataset.num_pids)
         self.log('train_acc', acc, on_step=True, on_epoch=True, prog_bar=True, logger=True)
         self.log('train_loss', loss, on_step=True, on_epoch=True, prog_bar=True, logger=True)

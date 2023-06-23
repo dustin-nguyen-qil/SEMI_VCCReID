@@ -18,17 +18,16 @@ class AggregationNet(nn.Module):
 
 class FusionNet(nn.Module):
 
-    def __init__(self, out_features: int = 1024) -> None:
+    def __init__(self, out_features: int = 512) -> None:
         super(FusionNet, self).__init__()
-        self.out_features = out_features
 
-        self.appearance_net = nn.Sequential(nn.Linear(in_features=2048, out_features=out_features),
+        self.appearance_net = nn.Sequential(nn.Linear(in_features=CONFIG.MODEL.APP_FEATURE_DIM, out_features=out_features),
                                             nn.LeakyReLU())
         self.shape_net = nn.Sequential(nn.Linear(in_features=10, out_features=out_features),
                                        nn.LeakyReLU())
 
         self.theta = AggregationNet()
-        self.bn = nn.BatchNorm1d(out_features)
+        self.bn = nn.BatchNorm1d(CONFIG.MODEL.AGG_FEATURE_DIM)
         init.normal_(self.bn.weight.data, 1.0, 0.02)
         init.constant_(self.bn.bias.data, 0.0),
         

@@ -114,7 +114,7 @@ class ResNet503D(nn.Module):
                                              nonlocal_idx=nl_idx[3],
                                              nonlocal_channels=2048)
 
-        self.bn = nn.BatchNorm1d(2048)
+        self.bn = nn.BatchNorm1d(config.MODEL.APP_FEATURE_DIM)
         init.normal_(self.bn.weight.data, 1.0, 0.02)
         init.constant_(self.bn.bias.data, 0.0)
 

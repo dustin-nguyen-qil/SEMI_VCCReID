@@ -10,7 +10,7 @@ class ShapeEncoder(nn.Module):
     def __init__(self, hidden):
         super(ShapeEncoder).__init__()
         self.layer1 = nn.Linear(in_features=1024, out_features=hidden)
-        self.layer2 = nn.Linear(in_features=hidden, out_features=hidden)
+        self.layer2 = nn.Linear(in_features=hidden, out_features=10)
 
     def forward(self, x):
         x = self.layer1(x)
