@@ -78,8 +78,8 @@ class VideoDataset(Dataset):
         
         subset_indices = [img_paths.index(img_path) for img_path in img_paths]
 
-        xc = [xcs[i] for i in subset_indices]
-        beta = [betas[i] for i in subset_indices]
+        xc = torch.tensor([list(xcs[i]) for i in subset_indices], dtype=torch.float32)
+        beta = torch.tensor([betas[i] for i in subset_indices], dtype=torch.float32)
         
         clip = self.loader(img_paths)
 
@@ -89,6 +89,7 @@ class VideoDataset(Dataset):
 
         # trans T x C x H x W to C x T x H x W
         clip = torch.stack(clip, 0).permute(1, 0, 2, 3)
+        
 
         return clip, pid, camid, clothes_id, xc, beta
     

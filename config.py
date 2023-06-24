@@ -77,12 +77,16 @@ class CONFIG:
         CLA_M = 0.
         CLOTHES_CLA_LOSS = 'cosface'
         PAIR_LOSS = 'triplet'
-        PAIR_LOSS_WEIGHT = 0.5
         PAIR_S = 16.
         PAIR_M = 0.3
         CAL = 'cal'
         EPSILON = 0.1
         MOMENTUM = 0.
+
+        APP_LOSS_WEIGHT = 10
+        SHAPE1_LOSS_WEIGHT = 0.05
+        SHAPE2_LOSS_WEIGHT = 1
+        FUSED_LOSS_WEIGHT = 0.01
 
     @dataclass
     class TRAIN:
@@ -98,7 +102,7 @@ class CONFIG:
             LR = 0.0035
             WEIGHT_DECAY = 5e-4
 
-        WITH_SHAPE = False
+        WITH_GAIT = False
         START_EPOCH = 0
         MAX_EPOCH = 150
         RESUME = None  # add checkpoint path here

@@ -6,7 +6,7 @@ import torch
 from torch.optim import lr_scheduler
 from config import CONFIG
 from datasets.dataset_loader import build_trainloader
-from models import build_models
+from models import build_models, compute_loss
 from utils.losses import build_losses
 from torchmetrics import functional as FM
 from models.vid_resnet import C2DResNet50
@@ -23,12 +23,13 @@ class Baseline(LightningModule):
         # pid2clothes = torch.from_numpy(self.dataset.pid2clothes)
 
         # Build model
-        self.appearance_model, self.shape_model, self.fusion_net, self.identity_classifier = build_models(
-            CONFIG, self.dataset.num_pids, self.dataset.num_clothes)
+        self.app_model, self.app_classifier, self.shape_model, self.shape1_classifier,\
+             self.shape2_classifier, self.fusion_net, self.id_classifier = \
+            build_models(CONFIG, self.dataset.num_pids, self.dataset.num_clothes)
         # Build identity classification loss, pairwise loss, clothes classificaiton loss
         # and adversarial loss.
-        self.criterion_cla, self.criterion_pair, self.criterion_clothes, self.criterion_adv, self.shape_loss = build_losses(
-            CONFIG, self.dataset.num_clothes)
+        self.criterion_cla, self.criterion_pair, self.criterion_shape_mse, _, _ \
+             = build_losses(CONFIG, self.dataset.num_clothes)
 
         self.training_step_outputs = []
         self.save_hyperparameters()
@@ -56,33 +57,35 @@ class Baseline(LightningModule):
             pass
     
     def app_forward(self, images):
-        appearance_feature = self.appearance_model(images)
-        return appearance_feature
+        app_feature = self.app_model(images)
+        app_logits = self.app_classifier(app_feature)
+        return app_feature, app_logits
     
     def shape_forward(self, xcs):
-        shape_feature = self.shape_model(xcs)
-        return shape_feature
+        shape1_feature, shape2_feature = self.shape_model(xcs)
+        shape1_logits = self.shape1_classifier(shape1_feature)
+        shape2_logits = self.shape2_classifier(shape2_feature)
+        return shape1_feature, shape2_feature, shape1_logits, shape2_logits
     
-    def fusion(self, appearance_feature, shape_feature):
-        final_feature = self.fusion_net(appearance_feature, shape_feature)
+    def fusion(self, app_feature, shape_feature):
+        final_feature = self.fusion_net(app_feature, shape_feature)
         return final_feature
     
     def training_step(self, batch, batch_idx):
-        imgs, pids, camids, clothes_ids, xcs, betas = batch 
-        appearance_feature = self.app_forward(imgs)
-        if CONFIG.TRAIN.WITH_SHAPE:
-            shape_feature = self.shape_forward(xcs)
-            fused_feature = self.fusion(appearance_feature, shape_feature)
-            features = fused_feature
-        else:
-            features = appearance_feature
+        imgs, pids, _, clothes_ids, xcs, betas = batch 
+        app_feature, app_logits = self.app_forward(imgs)
+        shape1_feature, shape2_feature, shape1_logits, shape2_logits = \
+                self.shape_forward(xcs)
+            
+        fused_feature = self.fusion(app_feature, shape2_feature)
+        fused_logits = self.id_classifier(fused_feature)
 
-        logits = self.identity_classifier(features)
-        id_loss = self.criterion_cla(logits, pids)
-        pair_loss = self.criterion_pair(features, pids)
-
-        loss = id_loss + pair_loss * CONFIG.LOSS.PAIR_LOSS_WEIGHT
-        acc = FM.accuracy(logits, pids, 'multiclass', average='macro', num_classes=self.dataset.num_pids)
+        loss = compute_loss(CONFIG, pids, self.criterion_cla, self.criterion_pair,
+                            self.criterion_shape_mse, app_feature, app_logits,
+                            betas, shape1_feature, shape1_logits, shape2_feature, shape2_logits,
+                            fused_feature, fused_logits)
+        
+        acc = FM.accuracy(fused_logits, pids, 'multiclass', average='macro', num_classes=self.dataset.num_pids)
         self.log('train_acc', acc, on_step=True, on_epoch=True, prog_bar=True, logger=True)
         self.log('train_loss', loss, on_step=True, on_epoch=True, prog_bar=True, logger=True)
 
@@ -97,8 +100,8 @@ class Baseline(LightningModule):
 class Inference(nn.Module):
     def __init__(self, config) -> None:
         super(Inference, self).__init__()
-        self.appearance_model = C2DResNet50(config)
+        self.app_model = C2DResNet50(config)
     
     def forward(self, imgs):
-        return self.appearance_model(imgs)
+        return self.app_model(imgs)
 

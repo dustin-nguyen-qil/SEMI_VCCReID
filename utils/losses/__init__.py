@@ -52,7 +52,8 @@ def build_losses(config, num_train_clothes):
     else:
         raise KeyError("Invalid clothing classification loss: '{}'".format(config.LOSS.CAL))
     
-    shape_loss = nn.MSELoss()
+    # Build losses for shape module
+    criterion_shape_mse = nn.MSELoss()
 
-    return criterion_cla, criterion_pair, criterion_clothes, criterion_cal, shape_loss
+    return criterion_cla, criterion_pair, criterion_shape_mse, criterion_clothes, criterion_cal 
 

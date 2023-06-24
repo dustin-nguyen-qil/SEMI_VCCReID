@@ -135,6 +135,6 @@ plt.ylabel('Identification Rate')
 plt.title(model_name)
 plt.grid(False)
 # Save the plot to an output folder
-path = f"workspace/output/{model_name[:-4]}.png"
+path = f"work_space/output/{model_name[:-4]}.png"
 plt.legend()
 plt.savefig(path)

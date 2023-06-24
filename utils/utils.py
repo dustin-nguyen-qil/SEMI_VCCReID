@@ -34,8 +34,7 @@ def RmBN2dAffine(model):
 
 def build_model_name():
     model_name = f'{CONFIG.DATA.DATASET}_{CONFIG.TRAIN.MAX_EPOCH}_{CONFIG.DATA.TRAIN_BATCH}_{CONFIG.TRAIN.OPTIMIZER.LR}'
-    if CONFIG.TRAIN.WITH_SHAPE:
-        model_name += '_shape'
+    model_name += '_shape'
     if CONFIG.DATA.USE_SAMPLER:
         model_name += '_sampler'
     if CONFIG.DATA.TRAIN_DENSE:

@@ -8,13 +8,14 @@ from torch.nn import functional as F
 """
 class ShapeEncoder(nn.Module):
     def __init__(self, hidden):
-        super(ShapeEncoder).__init__()
-        self.layer1 = nn.Linear(in_features=1024, out_features=hidden)
-        self.layer2 = nn.Linear(in_features=hidden, out_features=10)
-
+        super(ShapeEncoder, self).__init__()
+        self.encoder = nn.Sequential(
+            nn.Linear(in_features=1024, out_features=hidden),
+            nn.Linear(in_features=hidden, out_features=128),
+            nn.Linear(in_features=128, out_features=10)
+        )
     def forward(self, x):
-        x = self.layer1(x)
-        x = self.layer2(x)
+        x = self.encoder(x)
         return x 
 
 class IntraFrameDiff(nn.Module):
@@ -39,7 +40,7 @@ class IntraFrameDiff(nn.Module):
         """
         B = beta_diff.size(0)
         x = self.conv(beta_diff)
-        x = F.sigmoid(x)
+        x = torch.sigmoid(x)
         return x.view(B, 1, self.num_frames, 10)
 
 
@@ -76,7 +77,7 @@ class InterFrameDiff(nn.Module):
         for k in range(self.num_shape_params):
             module = getattr(self, f"conv_{k+1}")
             __x = module(x[k])
-            __x = F.sigmoid(__x)
+            __x = torch.sigmoid(__x)
             out.append(__x)
             # print(x.shape)
         out = torch.stack(tensors=out, dim=1)
@@ -117,4 +118,4 @@ class DSA(nn.Module):
         ws = torch.softmax(ws, dim=2)
         beta_s = beta * ws
         beta_s = torch.sum(beta_s, dim=1)
-        return beta_s
+        return beta, beta_s
