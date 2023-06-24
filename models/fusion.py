@@ -34,9 +34,8 @@ class FusionNet(nn.Module):
 
     def forward(self, appearance_features: torch.Tensor,
                 shape_features: torch.Tensor) -> torch.Tensor:
-        appearance = self.appearance_net(appearance_features)
-        shape = self.shape_net(shape_features)
-        print(appearance.size(), shape.size())
+        appearance = self.appearance_net(appearance_features) # 512
+        shape = self.shape_net(shape_features) # 512
         if CONFIG.MODEL.AGG == 'SUM':
             agg_features = self.theta(x=appearance, y=shape)
         else: 

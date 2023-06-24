@@ -19,7 +19,6 @@ class GaitSet(nn.Module):
         self.model_cfg = model_cfg
         sequence_length = torch.IntTensor(model_cfg.SEQUENCE_LENGTH)
         self.register_buffer('sequence_length', sequence_length)
-        print(self.sequence_length.data.numpy().tolist())
         self.build_network(model_cfg=model_cfg)
 
     def build_network(self, model_cfg):

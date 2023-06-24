@@ -46,9 +46,9 @@ class CONFIG:
         FINAL_FEATURE_DIM = 512
         AGG = 'SUM'
         if AGG == 'SUM':
-            AGG_FEATURE_DIM = 2 * FINAL_FEATURE_DIM
-        else:
             AGG_FEATURE_DIM = FINAL_FEATURE_DIM
+        else:
+            AGG_FEATURE_DIM = 2 * FINAL_FEATURE_DIM
 
     @dataclass
     class GAITSET:

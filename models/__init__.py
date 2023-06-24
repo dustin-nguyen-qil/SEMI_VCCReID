@@ -42,14 +42,14 @@ def compute_loss(config,
                  app_feature, 
                  app_logits, 
                  betas,
-                 shape1_feature,
+                 shape1_out,
                  shape1_logits,
                  shape2_feature,
                  shape2_logits,
                  fused_feature, 
                  fused_logits):
     
-    shape1_mse = shape_mse_loss(shape1_feature, betas)
+    shape1_mse = shape_mse_loss(shape1_out, betas)
     shape1_id_loss = criterion_cla(shape1_logits, pids)
 
     shape2_id_loss = criterion_cla(shape2_logits, pids)

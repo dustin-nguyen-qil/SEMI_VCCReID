@@ -62,10 +62,10 @@ class Baseline(LightningModule):
         return app_feature, app_logits
     
     def shape_forward(self, xcs):
-        shape1_feature, shape2_feature = self.shape_model(xcs)
+        shape1_out, shape1_feature, shape2_feature = self.shape_model(xcs)
         shape1_logits = self.shape1_classifier(shape1_feature)
         shape2_logits = self.shape2_classifier(shape2_feature)
-        return shape1_feature, shape2_feature, shape1_logits, shape2_logits
+        return shape1_out, shape2_feature, shape1_logits, shape2_logits
     
     def fusion(self, app_feature, shape_feature):
         final_feature = self.fusion_net(app_feature, shape_feature)
@@ -74,15 +74,15 @@ class Baseline(LightningModule):
     def training_step(self, batch, batch_idx):
         imgs, pids, _, clothes_ids, xcs, betas = batch 
         app_feature, app_logits = self.app_forward(imgs)
-        shape1_feature, shape2_feature, shape1_logits, shape2_logits = \
+        shape1_out, shape2_feature, shape1_logits, shape2_logits = \
                 self.shape_forward(xcs)
-            
+        
         fused_feature = self.fusion(app_feature, shape2_feature)
         fused_logits = self.id_classifier(fused_feature)
 
         loss = compute_loss(CONFIG, pids, self.criterion_cla, self.criterion_pair,
                             self.criterion_shape_mse, app_feature, app_logits,
-                            betas, shape1_feature, shape1_logits, shape2_feature, shape2_logits,
+                            betas, shape1_out, shape1_logits, shape2_feature, shape2_logits,
                             fused_feature, fused_logits)
         
         acc = FM.accuracy(fused_logits, pids, 'multiclass', average='macro', num_classes=self.dataset.num_pids)
