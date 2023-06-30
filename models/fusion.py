@@ -39,6 +39,6 @@ class FusionNet(nn.Module):
         if CONFIG.MODEL.AGG == 'SUM':
             agg_features = self.theta(x=appearance, y=shape)
         else: 
-            agg_features = torch.cat((appearance, shape),dim=0)
+            agg_features = torch.cat((appearance, shape),dim=1)
         agg_features = self.bn(agg_features)
         return agg_features

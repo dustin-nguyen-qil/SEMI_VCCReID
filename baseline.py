@@ -1,13 +1,11 @@
-from typing import Any
 from pytorch_lightning import LightningModule
-from pytorch_lightning.utilities.types import STEP_OUTPUT, TRAIN_DATALOADERS
 from torch import nn, optim
-import torch
 from torch.optim import lr_scheduler
 from config import CONFIG
 from datasets.dataset_loader import build_trainloader
 from models import build_models, compute_loss
 from utils.losses import build_losses
+from utils.multiloss_weighting import MultiNoiseLoss
 from torchmetrics import functional as FM
 from models.vid_resnet import C2DResNet50
 
@@ -30,13 +28,21 @@ class Baseline(LightningModule):
         # and adversarial loss.
         self.criterion_cla, self.criterion_pair, self.criterion_shape_mse, _, _ \
              = build_losses(CONFIG, self.dataset.num_clothes)
+        self.multi_loss = MultiNoiseLoss(n_losses=4)
 
         self.training_step_outputs = []
         self.save_hyperparameters()
         
     def configure_optimizers(self):
+        base_params = list(self.app_model.parameters()) + list(self.app_classifier.parameters()) +\
+                        list(self.shape_model.parameters()) + list(self.shape1_classifier.parameters()) +\
+                        list(self.shape2_classifier.parameters()) + list(self.fusion_net.parameters()) +\
+                        list(self.id_classifier.parameters()) 
         optimizer = optim.Adam(
-            self.parameters(),
+            [
+                {'params': base_params},
+                {'params': self.multi_loss.noise_params, 'lr': 0.001}
+            ],
             lr=CONFIG.TRAIN.OPTIMIZER.LR,
             weight_decay=CONFIG.TRAIN.OPTIMIZER.WEIGHT_DECAY)
         
@@ -83,7 +89,7 @@ class Baseline(LightningModule):
         loss = compute_loss(CONFIG, pids, self.criterion_cla, self.criterion_pair,
                             self.criterion_shape_mse, app_feature, app_logits,
                             betas, shape1_out, shape1_logits, shape2_feature, shape2_logits,
-                            fused_feature, fused_logits)
+                            fused_feature, fused_logits, self.multi_loss)
         
         acc = FM.accuracy(fused_logits, pids, 'multiclass', average='macro', num_classes=self.dataset.num_pids)
         self.log('train_acc', acc, on_step=True, on_epoch=True, prog_bar=True, logger=True)

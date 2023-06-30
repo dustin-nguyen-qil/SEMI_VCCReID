@@ -72,16 +72,16 @@ class VideoDataset(Dataset):
             img_paths = tracklet['img_paths']
             xcs = tracklet['shape_1024']
             betas = tracklet['betas']
-            
+
         if self.temporal_transform is not None:
-            img_paths = self.temporal_transform(img_paths)
-        
-        subset_indices = [img_paths.index(img_path) for img_path in img_paths]
+            img_paths_tt = self.temporal_transform(img_paths)
+
+        subset_indices = [img_paths.index(img_path) for img_path in img_paths_tt]
 
         xc = torch.tensor([list(xcs[i]) for i in subset_indices], dtype=torch.float32)
         beta = torch.tensor([betas[i] for i in subset_indices], dtype=torch.float32)
         
-        clip = self.loader(img_paths)
+        clip = self.loader(img_paths_tt)
 
         if self.spatial_transform is not None:
             self.spatial_transform.randomize_parameters()

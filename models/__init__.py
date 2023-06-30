@@ -47,7 +47,8 @@ def compute_loss(config,
                  shape2_feature,
                  shape2_logits,
                  fused_feature, 
-                 fused_logits):
+                 fused_logits,
+                 multi_loss = None):
     
     shape1_mse = shape_mse_loss(shape1_out, betas)
     shape1_id_loss = criterion_cla(shape1_logits, pids)
@@ -61,11 +62,15 @@ def compute_loss(config,
     fused_id_loss = criterion_cla(fused_logits, pids)
     fused_pair_loss = criterion_pair(fused_feature, pids)
 
-    loss = config.LOSS.FUSED_LOSS_WEIGHT * (fused_id_loss + fused_pair_loss) + \
-            config.LOSS.APP_LOSS_WEIGHT * (app_id_loss + app_pair_loss) + \
-            config.LOSS.SHAPE2_LOSS_WEIGHT * (shape2_id_loss + shape2_pair_loss) + \
-            config.LOSS.SHAPE1_LOSS_WEIGHT * (0.1*shape1_id_loss + 0.5*shape1_mse)
-    
+    if config.LOSS.MULTI_LOSS_WEIGHTING:
+        loss = multi_loss([(fused_id_loss + fused_pair_loss), (app_id_loss + app_pair_loss), 
+                           (shape2_id_loss + shape2_pair_loss), (0.1*shape1_id_loss + 0.5*shape1_mse)])
+    else:
+        loss = config.LOSS.FUSED_LOSS_WEIGHT * (fused_id_loss + fused_pair_loss) + \
+                config.LOSS.APP_LOSS_WEIGHT * (app_id_loss + app_pair_loss) + \
+                config.LOSS.SHAPE2_LOSS_WEIGHT * (shape2_id_loss + shape2_pair_loss) + \
+                config.LOSS.SHAPE1_LOSS_WEIGHT * (0.1*shape1_id_loss + 0.5*shape1_mse)
+        
     return loss 
             
         

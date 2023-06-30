@@ -32,10 +32,16 @@ class TemporalRandomCrop(object):
             begin_index = random.randint(0, rand_end)
             end_index = begin_index + (self.size - 1) * self.stride + 1
             out = frame_indices[begin_index:end_index:self.stride]
+        
+        elif len(frame_indices) >= self.size * (self.stride//2):
+            rand_end = len(frame_indices) - (self.size - 1) * self.stride//2 - 1
+            begin_index = random.randint(0, rand_end)
+            end_index = begin_index + (self.size - 1) * self.stride//2 + 1
+            out = frame_indices[begin_index:end_index:self.stride//2]
         elif len(frame_indices) >= self.size:
             clips = []
             for i in range(self.size):
-                    clips.append(frame_indices[len(frame_indices)//self.size*i : len(frame_indices)//self.size*(i+1)])
+                clips.append(frame_indices[len(frame_indices)//self.size*i : len(frame_indices)//self.size*(i+1)])
             out = []
             for i in range(self.size):
                 out.append(random.choice(clips[i]))

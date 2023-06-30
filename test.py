@@ -11,6 +11,16 @@ from utils.utils import build_model_name
 import numpy as np
 import matplotlib.pyplot as plt
 
+model_name = build_model_name()
+
+logging.basicConfig(filename=f"work_space/loggers/test_{model_name}.txt",
+                    filemode='a',
+                    format='%(asctime)s,%(msecs)d %(name)s %(levelname)s %(message)s',
+                    datefmt='%H:%M:%S',
+                    level=logging.DEBUG)
+
+logging.info("Testing latest trained ReID model")
+
 def test(model, queryloader, galleryloader, query, gallery):
     logger = logging.getLogger('reid.test')
     since = time.time()
@@ -106,8 +116,9 @@ def test(model, queryloader, galleryloader, query, gallery):
 """
     Testing
 """
-model_name = build_model_name()
+
 state_dict_path = osp.join(CONFIG.METADATA.SAVE_PATH, model_name)
+# state_dict_path = "work_space/save/vccr_150_16_0.0005_shape_sampler_dense.pth"
 appearance_model = Inference(CONFIG)
 appearance_model.load_state_dict(torch.load(state_dict_path), strict=False)
 queryloader, galleryloader, query, gallery = build_testloader()
@@ -118,16 +129,16 @@ queryloader, galleryloader, query, gallery = build_testloader()
 print()
 print("==============================")
 
-standard_results = f"Standard | R-1: {standard_cmc[0]:.2f} R-4: {standard_cmc[4]:.2f} R-10: {standard_cmc[9]:.2f} | mAP: {standard_mAP:.2f}"
-sc_results = f"Same Clothes | R-1: {sc_cmc[0]:.2f} R-4: {sc_cmc[4]:.2f} R-10: {sc_cmc[9]:.2f} | mAP: {sc_mAP:.2f}"
-cc_results = f"Cloth-changing | R-1: {cc_cmc[0]:.2f} R-4: {cc_cmc[4]:.2f} R-10: {cc_cmc[9]:.2f} | mAP: {standard_mAP:.2f}"
+standard_results = f"Standard | R-1: {standard_cmc[0]:.2f} | R-4: {standard_cmc[4]:.2f} | R-10: {standard_cmc[9]:.2f} | mAP: {standard_mAP:.2f}"
+sc_results = f"Same Clothes | R-1: {sc_cmc[0]:.2f} | R-4: {sc_cmc[4]:.2f} | R-10: {sc_cmc[9]:.2f} | mAP: {sc_mAP:.2f}"
+cc_results = f"Cloth-changing | R-1: {cc_cmc[0]:.2f} | R-4: {cc_cmc[4]:.2f} | R-10: {cc_cmc[9]:.2f} | mAP: {standard_mAP:.2f}"
 # Calculate the rank values for the x-axis
 ranks = np.arange(1, len(standard_cmc)+1)
 ranks = np.arange(1, 41)
 
 # # Plot the CMC curve 
-plt.plot(ranks, standard_cmc[:40], '-o', label=standard_results)
 plt.plot(ranks, sc_cmc[:40], '-o', label=sc_results)
+plt.plot(ranks, standard_cmc[:40], '-o', label=standard_results)
 plt.plot(ranks, cc_cmc[:40], '-x', label=cc_results)
 
 plt.xlabel('Rank')

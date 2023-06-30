@@ -44,7 +44,10 @@ def build_trainloader():
     """
     Build Train Loader
     """
-    train_data_path = osp.join(config.DATA.ROOT, config.DATA.DATASET, 'train.pkl')
+    if config.DATA.DATASET == "vccr" and config.TRAIN.FRONT_ONLY:
+        train_data_path = osp.join(config.DATA.ROOT, config.DATA.DATASET, 'train_front.pkl')
+    else:
+        train_data_path = osp.join(config.DATA.ROOT, config.DATA.DATASET, 'train.pkl')
 
     train = VideoDataset(
         train_data_path, 
@@ -82,6 +85,10 @@ def build_testloader():
     """
     Build query and gallery loader
     """
+    # if config.TRAIN.FRONT_ONLY:
+    #     query_data_path = osp.join(config.DATA.ROOT, config.DATA.DATASET, 'query_front.pkl')
+    #     gallery_data_path = osp.join(config.DATA.ROOT, config.DATA.DATASET, 'gallery_front.pkl')
+    # else:
     query_data_path = osp.join(config.DATA.ROOT, config.DATA.DATASET, 'query.pkl')
     gallery_data_path = osp.join(config.DATA.ROOT, config.DATA.DATASET, 'gallery.pkl')
 

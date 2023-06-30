@@ -16,6 +16,17 @@ from typing import Any
 from torch import nn
 
 
+def build_model_name():
+    model_name = f'm_{CONFIG.DATA.DATASET}_{CONFIG.TRAIN.OPTIMIZER.LR}'
+    if CONFIG.LOSS.MULTI_LOSS_WEIGHTING:
+        model_name += '_mlw'
+    if CONFIG.MODEL.AGG == "CONCAT":
+        model_name += f'_concat'
+    if CONFIG.TRAIN.FRONT_ONLY:
+        model_name += '_front'
+    model_name += '.pth'
+    return model_name
+
 def is_list_or_tuple(x: Any) -> bool:
     return isinstance(x, (list, tuple))
 
@@ -30,17 +41,6 @@ def RmBN2dAffine(model):
         if isinstance(m, nn.BatchNorm2d):
             m.weight.requires_grad = False
             m.bias.requires_grad = False
-
-
-def build_model_name():
-    model_name = f'{CONFIG.DATA.DATASET}_{CONFIG.TRAIN.MAX_EPOCH}_{CONFIG.DATA.TRAIN_BATCH}_{CONFIG.TRAIN.OPTIMIZER.LR}'
-    model_name += '_shape'
-    if CONFIG.DATA.USE_SAMPLER:
-        model_name += '_sampler'
-    if CONFIG.DATA.TRAIN_DENSE:
-        model_name += '_dense'
-    model_name += '.pth'
-    return model_name
 
 def set_seed(seed=None):
     if seed is None:

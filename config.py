@@ -14,8 +14,8 @@ class CONFIG:
     class DATA:
         ROOT = 'data'
         DATASET = 'vccr' # vccr
-        USE_SAMPLER = False
-        TRAIN_DENSE = False
+        USE_SAMPLER = True
+        TRAIN_DENSE = True
         TRAIN_BATCH = 16
 
         SAMPLING_STEP = 64
@@ -44,7 +44,7 @@ class CONFIG:
         RES4_STRIDE = 1
         APP_FEATURE_DIM = 2048
         FINAL_FEATURE_DIM = 512
-        AGG = 'SUM'
+        AGG = 'CONCAT'
         if AGG == 'SUM':
             AGG_FEATURE_DIM = FINAL_FEATURE_DIM
         else:
@@ -83,26 +83,30 @@ class CONFIG:
         EPSILON = 0.1
         MOMENTUM = 0.
 
-        APP_LOSS_WEIGHT = 10
+        MULTI_LOSS_WEIGHTING = True
+        APP_LOSS_WEIGHT = 5
         SHAPE1_LOSS_WEIGHT = 0.05
         SHAPE2_LOSS_WEIGHT = 1
-        FUSED_LOSS_WEIGHT = 0.01
+        FUSED_LOSS_WEIGHT = 0.1
 
     @dataclass
     class TRAIN:
 
         @dataclass
         class LR_SCHEDULER:
-            STEPSIZE = [40, 80, 120]
+            STEPSIZE = [40, 70, 100, 120]
             DECAY_RATE = 0.1
 
         @dataclass
         class OPTIMIZER:
             NAME = 'adam'
-            LR = 0.0035
+            LR = 0.00035
             WEIGHT_DECAY = 5e-4
 
         WITH_GAIT = False
+
+        FRONT_ONLY = False
+
         START_EPOCH = 0
         MAX_EPOCH = 150
         RESUME = None  # add checkpoint path here
