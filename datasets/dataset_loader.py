@@ -85,12 +85,12 @@ def build_testloader():
     """
     Build query and gallery loader
     """
-    # if config.TRAIN.FRONT_ONLY:
-    #     query_data_path = osp.join(config.DATA.ROOT, config.DATA.DATASET, 'query_front.pkl')
-    #     gallery_data_path = osp.join(config.DATA.ROOT, config.DATA.DATASET, 'gallery_front.pkl')
-    # else:
-    query_data_path = osp.join(config.DATA.ROOT, config.DATA.DATASET, 'query.pkl')
-    gallery_data_path = osp.join(config.DATA.ROOT, config.DATA.DATASET, 'gallery.pkl')
+    if config.TRAIN.FRONT_ONLY:
+        query_data_path = osp.join(config.DATA.ROOT, config.DATA.DATASET, 'query_front.pkl')
+        gallery_data_path = osp.join(config.DATA.ROOT, config.DATA.DATASET, 'gallery_front.pkl')
+    else:
+        query_data_path = osp.join(config.DATA.ROOT, config.DATA.DATASET, 'query.pkl')
+        gallery_data_path = osp.join(config.DATA.ROOT, config.DATA.DATASET, 'gallery.pkl')
 
     query = TestDataset(
         query_data_path,

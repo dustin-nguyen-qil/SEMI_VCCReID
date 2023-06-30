@@ -111,14 +111,14 @@ def test(model, queryloader, galleryloader, query, gallery):
             cc_cmc[0], cc_cmc[4], cc_cmc[9], cc_cmc[19], cc_mAP))
     logger.info("-----------------------------------------------------------")
 
-    return (standard_cmc, standard_mAP, sc_cmc, sc_mAP, cc_cmc, cc_mAP)
+    return (standard_cmc*100, standard_mAP*100, sc_cmc*100, sc_mAP*100, cc_cmc*100, cc_mAP*100)
 
 """
     Testing
 """
 
-state_dict_path = osp.join(CONFIG.METADATA.SAVE_PATH, model_name)
-# state_dict_path = "work_space/save/vccr_150_16_0.0005_shape_sampler_dense.pth"
+# state_dict_path = osp.join(CONFIG.METADATA.SAVE_PATH, model_name)
+state_dict_path = "work_space/save/vccr_150_16_0.0005_shape_sampler_dense_CONCAT.pth"
 appearance_model = Inference(CONFIG)
 appearance_model.load_state_dict(torch.load(state_dict_path), strict=False)
 queryloader, galleryloader, query, gallery = build_testloader()
@@ -129,9 +129,9 @@ queryloader, galleryloader, query, gallery = build_testloader()
 print()
 print("==============================")
 
-standard_results = f"Standard | R-1: {standard_cmc[0]:.2f} | R-4: {standard_cmc[4]:.2f} | R-10: {standard_cmc[9]:.2f} | mAP: {standard_mAP:.2f}"
-sc_results = f"Same Clothes | R-1: {sc_cmc[0]:.2f} | R-4: {sc_cmc[4]:.2f} | R-10: {sc_cmc[9]:.2f} | mAP: {sc_mAP:.2f}"
-cc_results = f"Cloth-changing | R-1: {cc_cmc[0]:.2f} | R-4: {cc_cmc[4]:.2f} | R-10: {cc_cmc[9]:.2f} | mAP: {standard_mAP:.2f}"
+standard_results = f"Standard | R-1: {standard_cmc[0]:.1f} | R-4: {standard_cmc[4]:.1f} | R-10: {standard_cmc[9]:.1f} | mAP: {standard_mAP:.1f}"
+sc_results = f"Same Clothes | R-1: {sc_cmc[0]:.1f} | R-4: {sc_cmc[4]:.1f} | R-10: {sc_cmc[9]:.1f} | mAP: {sc_mAP:.1f}"
+cc_results = f"Cloth-changing | R-1: {cc_cmc[0]:.1f} | R-4: {cc_cmc[4]:.1f} | R-10: {cc_cmc[9]:.1f} | mAP: {cc_mAP:.1f}"
 # Calculate the rank values for the x-axis
 ranks = np.arange(1, len(standard_cmc)+1)
 ranks = np.arange(1, 41)

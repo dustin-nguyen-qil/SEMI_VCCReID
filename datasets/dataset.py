@@ -148,7 +148,8 @@ class TestDataset(Dataset):
             tuple: (clip, pid, camid) where pid is identity of the clip.
             
         """
-        img_paths, pid, camid, clothes_id = self.dataset[index]        
+        img_paths, pid, camid, clothes_id = self.dataset[index]     
+        
         if self.temporal_transform is not None:
             img_paths = self.temporal_transform(img_paths)
         

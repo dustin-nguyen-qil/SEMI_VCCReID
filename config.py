@@ -13,7 +13,7 @@ class CONFIG:
     @dataclass
     class DATA:
         ROOT = 'data'
-        DATASET = 'vccr' # vccr
+        DATASET = 'ccvid' # vccr
         USE_SAMPLER = True
         TRAIN_DENSE = True
         TRAIN_BATCH = 16
@@ -44,7 +44,7 @@ class CONFIG:
         RES4_STRIDE = 1
         APP_FEATURE_DIM = 2048
         FINAL_FEATURE_DIM = 512
-        AGG = 'CONCAT'
+        AGG = 'SUM'
         if AGG == 'SUM':
             AGG_FEATURE_DIM = FINAL_FEATURE_DIM
         else:
@@ -83,8 +83,8 @@ class CONFIG:
         EPSILON = 0.1
         MOMENTUM = 0.
 
-        MULTI_LOSS_WEIGHTING = True
-        APP_LOSS_WEIGHT = 5
+        MULTI_LOSS_WEIGHTING = False
+        APP_LOSS_WEIGHT = 1
         SHAPE1_LOSS_WEIGHT = 0.05
         SHAPE2_LOSS_WEIGHT = 1
         FUSED_LOSS_WEIGHT = 0.1
@@ -100,7 +100,7 @@ class CONFIG:
         @dataclass
         class OPTIMIZER:
             NAME = 'adam'
-            LR = 0.00035
+            LR = 0.0005
             WEIGHT_DECAY = 5e-4
 
         WITH_GAIT = False

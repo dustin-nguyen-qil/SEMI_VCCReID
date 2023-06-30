@@ -10,9 +10,9 @@ class MultiNoiseLoss(nn.Module):
         super(MultiNoiseLoss, self).__init__()
         
         if torch.cuda.is_available():
-            self.noise_params = torch.rand(n_losses, requires_grad=True, device="cuda:0")
+            self.noise_params = nn.Parameter(torch.rand(n_losses),requires_grad=True) 
         else:
-            self.noise_params = torch.rand(n_losses, requires_grad=True)
+            self.noise_params = nn.Parameter(torch.rand(n_losses),requires_grad=True)
     
     def forward(self, losses):
         """
