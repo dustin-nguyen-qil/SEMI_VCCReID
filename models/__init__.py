@@ -62,7 +62,7 @@ def compute_loss(config,
     fused_id_loss = criterion_cla(fused_logits, pids)
     fused_pair_loss = criterion_pair(fused_feature, pids)
 
-    if config.LOSS.MULTI_LOSS_WEIGHTING:
+    if multi_loss is not None:
         loss = multi_loss([(fused_id_loss + fused_pair_loss), (app_id_loss + app_pair_loss), 
                            (shape2_id_loss + shape2_pair_loss), (0.1*shape1_id_loss + 0.5*shape1_mse)])
     else:

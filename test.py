@@ -117,8 +117,7 @@ def test(model, queryloader, galleryloader, query, gallery):
     Testing
 """
 
-# state_dict_path = osp.join(CONFIG.METADATA.SAVE_PATH, model_name)
-state_dict_path = "work_space/save/vccr_150_16_0.0005_shape_sampler_dense_CONCAT.pth"
+state_dict_path = osp.join(CONFIG.METADATA.SAVE_PATH, model_name)
 appearance_model = Inference(CONFIG)
 appearance_model.load_state_dict(torch.load(state_dict_path), strict=False)
 queryloader, galleryloader, query, gallery = build_testloader()

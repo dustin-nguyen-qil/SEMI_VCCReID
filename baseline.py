@@ -28,24 +28,32 @@ class Baseline(LightningModule):
         # and adversarial loss.
         self.criterion_cla, self.criterion_pair, self.criterion_shape_mse, _, _ \
              = build_losses(CONFIG, self.dataset.num_clothes)
-        self.multi_loss = MultiNoiseLoss(n_losses=4)
+        if CONFIG.LOSS.MULTI_LOSS_WEIGHTING:
+            self.multi_loss = MultiNoiseLoss(n_losses=4)
+        else: self.multi_loss = None
 
         self.training_step_outputs = []
         self.save_hyperparameters()
         
     def configure_optimizers(self):
-        base_params = list(self.app_model.parameters()) + list(self.app_classifier.parameters()) +\
-                        list(self.shape_model.parameters()) + list(self.shape1_classifier.parameters()) +\
-                        list(self.shape2_classifier.parameters()) + list(self.fusion_net.parameters()) +\
-                        list(self.id_classifier.parameters()) 
-        optimizer = optim.Adam(
-            [
-                {'params': base_params},
-                {'params': self.multi_loss.noise_params, 'lr': 0.001}
-            ],
-            lr=CONFIG.TRAIN.OPTIMIZER.LR,
-            weight_decay=CONFIG.TRAIN.OPTIMIZER.WEIGHT_DECAY)
-        
+        if CONFIG.LOSS.MULTI_LOSS_WEIGHTING:
+            base_params = list(self.app_model.parameters()) + list(self.app_classifier.parameters()) +\
+                            list(self.shape_model.parameters()) + list(self.shape1_classifier.parameters()) +\
+                            list(self.shape2_classifier.parameters()) + list(self.fusion_net.parameters()) +\
+                            list(self.id_classifier.parameters()) 
+            optimizer = optim.Adam(
+                [
+                    {'params': base_params},
+                    {'params': self.multi_loss.noise_params, 'lr': 0.001}
+                ],
+                lr=CONFIG.TRAIN.OPTIMIZER.LR,
+                weight_decay=CONFIG.TRAIN.OPTIMIZER.WEIGHT_DECAY)
+        else:
+            optimizer = optim.Adam(
+                params=self.parameters(),
+                lr=CONFIG.TRAIN.OPTIMIZER.LR,
+                weight_decay=CONFIG.TRAIN.OPTIMIZER.WEIGHT_DECAY)
+            
         scheduler = lr_scheduler.MultiStepLR(
             optimizer,
             milestones=CONFIG.TRAIN.LR_SCHEDULER.STEPSIZE,
