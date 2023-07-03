@@ -3,11 +3,11 @@ from torch import nn, optim
 from torch.optim import lr_scheduler
 from config import CONFIG
 from datasets.dataset_loader import build_trainloader
-from models import build_models, compute_loss
-from utils.losses import build_losses
+from models import build_models
+from utils.losses import build_losses, compute_loss
 from utils.multiloss_weighting import MultiNoiseLoss
 from torchmetrics import functional as FM
-from models.vid_resnet import *
+from models.appearance.vid_resnet import *
 
 class Baseline(LightningModule):
     def __init__(self) -> None:
@@ -18,15 +18,13 @@ class Baseline(LightningModule):
         else:
             self.trainloader, self.dataset = build_trainloader()
         
-        # pid2clothes = torch.from_numpy(self.dataset.pid2clothes)
 
         # Build model
         self.app_model, self.app_classifier, self.shape_model, self.shape1_classifier,\
              self.shape2_classifier, self.fusion_net, self.id_classifier = \
             build_models(CONFIG, self.dataset.num_pids, self.dataset.num_clothes)
-        # Build identity classification loss, pairwise loss, clothes classificaiton loss
-        # and adversarial loss.
-        self.criterion_cla, self.criterion_pair, self.criterion_shape_mse, _, _ \
+        # Build losses
+        self.criterion_cla, self.criterion_pair, self.criterion_shape_mse, self.criterion_div \
              = build_losses(CONFIG, self.dataset.num_clothes)
         if CONFIG.LOSS.MULTI_LOSS_WEIGHTING:
             self.multi_loss = MultiNoiseLoss(n_losses=4)
@@ -67,13 +65,19 @@ class Baseline(LightningModule):
     def on_train_epoch_start(self) -> None:
         if CONFIG.DATA.USE_SAMPLER:
             self.train_sampler.set_epoch(self.current_epoch)
-        else:
-            pass
     
-    def app_forward(self, images):
-        app_feature = self.app_model(images)
-        app_logits = self.app_classifier(app_feature)
-        return app_feature, app_logits
+    def app_forward(self, clip):
+        if CONFIG.MODEL.APP_MODEL == 'tclnet':
+            masks = None
+            app_feature, app_logits = self.app_model(clip)
+        elif CONFIG.MODEL.APP_MODEL == 'bicnet':
+            app_feature, masks = self.app_model(clip)
+            app_logits = self.app_classifier(app_feature)
+        else:
+            masks = None
+            app_feature = self.app_model(clip)
+            app_logits = self.app_classifier(app_feature)
+        return app_feature, app_logits, masks
     
     def shape_forward(self, xcs):
         shape1_out, shape1_feature, shape2_feature = self.shape_model(xcs)
@@ -86,8 +90,10 @@ class Baseline(LightningModule):
         return final_feature
     
     def training_step(self, batch, batch_idx):
-        imgs, pids, _, clothes_ids, xcs, betas = batch 
-        app_feature, app_logits = self.app_forward(imgs)
+        imgs, pids, _, _, xcs, betas = batch 
+        
+        app_feature, app_logits, masks = self.app_forward(imgs)
+        
         shape1_out, shape2_feature, shape1_logits, shape2_logits = \
                 self.shape_forward(xcs)
         
@@ -95,7 +101,7 @@ class Baseline(LightningModule):
         fused_logits = self.id_classifier(fused_feature)
 
         loss = compute_loss(CONFIG, pids, self.criterion_cla, self.criterion_pair,
-                            self.criterion_shape_mse, app_feature, app_logits,
+                            self.criterion_div, self.criterion_shape_mse, app_feature, app_logits, masks,
                             betas, shape1_out, shape1_logits, shape2_feature, shape2_logits,
                             fused_feature, fused_logits, self.multi_loss)
         
@@ -114,14 +120,8 @@ class Baseline(LightningModule):
 class Inference(nn.Module):
     def __init__(self, config) -> None:
         super(Inference, self).__init__()
-        if config.MODEL.APP_MODEL == 'c2d':
-            self.app_model = C2DResNet50(config)
-        elif config.MODEL.APP_MODEL == 'ap3d':
-            self.app_model = AP3DResNet50(config)
-        if config.MODEL.APP_MODEL == 'ap3dnl':
-            self.app_model = AP3DNLResNet50(config)
-        if config.MODEL.APP_MODEL == 'i3d':
-            self.app_model = I3DResNet50(config)
+        
+        self.app_model = build_models(config=config)
     
     def forward(self, imgs):
         return self.app_model(imgs)

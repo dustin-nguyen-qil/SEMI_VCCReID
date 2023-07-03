@@ -16,7 +16,7 @@ class CONFIG:
         DATASET = 'vccr' # vccr, ccvid
         USE_SAMPLER = True
         TRAIN_DENSE = True
-        TRAIN_BATCH = 8
+        TRAIN_BATCH = 16
 
         SAMPLING_STEP = 64
         NUM_WORKERS = 4
@@ -41,7 +41,7 @@ class CONFIG:
             CONTRACTIVE_ATT = True
 
         RES4_STRIDE = 1
-        APP_MODEL = 'ap3d' # c2d, ap3d, i3d, ap3dnl, nl
+        APP_MODEL = 'bicnet' # c2d, ap3d, i3d, ap3dnl, nl, tclnet, bicnet
         APP_FEATURE_DIM = 2048
         FINAL_FEATURE_DIM = 512
         AGG = 'CONCAT'
@@ -94,7 +94,7 @@ class CONFIG:
 
         @dataclass
         class LR_SCHEDULER:
-            STEPSIZE = [40, 70, 100, 120]
+            STEPSIZE = [40, 70, 100, 130]
             DECAY_RATE = 0.1
 
         @dataclass
