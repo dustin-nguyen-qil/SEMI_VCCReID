@@ -17,13 +17,11 @@ from torch import nn
 
 
 def build_model_name():
-    model_name = f'{CONFIG.DATA.DATASET}_150_16_{CONFIG.TRAIN.OPTIMIZER.LR}_shape_sampler_dense'
+    model_name = f'{CONFIG.DATA.DATASET}_{CONFIG.TRAIN.OPTIMIZER.LR}_{CONFIG.DATA.TRAIN_BATCH}_{CONFIG.MODEL.APP_MODEL}'
     if CONFIG.LOSS.MULTI_LOSS_WEIGHTING:
         model_name += '_mlw'
     if CONFIG.MODEL.AGG == "CONCAT":
         model_name += f'_CONCAT'
-    if CONFIG.TRAIN.FRONT_ONLY:
-        model_name += '_front'
     model_name += '.pth'
     return model_name
 

@@ -7,7 +7,7 @@ from models import build_models, compute_loss
 from utils.losses import build_losses
 from utils.multiloss_weighting import MultiNoiseLoss
 from torchmetrics import functional as FM
-from models.vid_resnet import C2DResNet50
+from models.vid_resnet import *
 
 class Baseline(LightningModule):
     def __init__(self) -> None:
@@ -114,7 +114,14 @@ class Baseline(LightningModule):
 class Inference(nn.Module):
     def __init__(self, config) -> None:
         super(Inference, self).__init__()
-        self.app_model = C2DResNet50(config)
+        if config.MODEL.APP_MODEL == 'c2d':
+            self.app_model = C2DResNet50(config)
+        elif config.MODEL.APP_MODEL == 'ap3d':
+            self.app_model = AP3DResNet50(config)
+        if config.MODEL.APP_MODEL == 'ap3dnl':
+            self.app_model = AP3DNLResNet50(config)
+        if config.MODEL.APP_MODEL == 'i3d':
+            self.app_model = I3DResNet50(config)
     
     def forward(self, imgs):
         return self.app_model(imgs)

@@ -13,10 +13,10 @@ class CONFIG:
     @dataclass
     class DATA:
         ROOT = 'data'
-        DATASET = 'ccvid' # vccr
+        DATASET = 'vccr' # vccr, ccvid
         USE_SAMPLER = True
         TRAIN_DENSE = True
-        TRAIN_BATCH = 16
+        TRAIN_BATCH = 8
 
         SAMPLING_STEP = 64
         NUM_WORKERS = 4
@@ -40,11 +40,11 @@ class CONFIG:
             TEMPERATURE = 4
             CONTRACTIVE_ATT = True
 
-        NAME = 'c2dres50'
         RES4_STRIDE = 1
+        APP_MODEL = 'ap3d' # c2d, ap3d, i3d, ap3dnl, nl
         APP_FEATURE_DIM = 2048
         FINAL_FEATURE_DIM = 512
-        AGG = 'SUM'
+        AGG = 'CONCAT'
         if AGG == 'SUM':
             AGG_FEATURE_DIM = FINAL_FEATURE_DIM
         else:
@@ -104,8 +104,6 @@ class CONFIG:
             WEIGHT_DECAY = 5e-4
 
         WITH_GAIT = False
-
-        FRONT_ONLY = False
 
         START_EPOCH = 0
         MAX_EPOCH = 150

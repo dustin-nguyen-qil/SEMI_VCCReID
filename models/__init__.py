@@ -4,13 +4,20 @@ from typing import Tuple, Type, Union
 from torch import nn
 
 from models.classifier import (Classifier, NormalizedClassifier)
-from models.vid_resnet import C2DResNet50
+from models.vid_resnet import *
 from models.dsa import DSA
 from models.gaitset import GaitSet
 from models.fusion import FusionNet
 
 def build_models(config, num_ids, num_clothes):
-    app_model = C2DResNet50(config)
+    if config.MODEL.APP_MODEL == 'c2d':
+        app_model = C2DResNet50(config)
+    elif config.MODEL.APP_MODEL == 'ap3d':
+        app_model = AP3DResNet50(config)
+    if config.MODEL.APP_MODEL == 'ap3dnl':
+        app_model = AP3DNLResNet50(config)
+    if config.MODEL.APP_MODEL == 'i3d':
+        app_model = I3DResNet50(config)
     # shape_model = DSA()
     # fusion = FusionNet(out_features=config.MODEL.FEATURE_DIM)
     shape_model = DSA(num_frames=config.DSA.NUM_FRAME, 
