@@ -28,7 +28,9 @@ trainer = Trainer(
 
 
 if CONFIG.TRAIN.RESUME is not None:
-    trainer.fit(model=model, ckpt_path=CONFIG.TRAIN.RESUME)
+    ckpt_path=CONFIG.TRAIN.RESUME
+    model.load_state_dict(torch.load(ckpt_path)['state_dict'])
+    trainer.fit(model=model)#, ckpt_path=CONFIG.TRAIN.RESUME)
 else:
     trainer.fit(model=model)
 

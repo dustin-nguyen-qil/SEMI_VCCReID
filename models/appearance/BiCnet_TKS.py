@@ -97,11 +97,11 @@ class Bottleneck3d(nn.Module):
 
 class BiCnet_TKS(nn.Module):
 
-    def __init__(self, **kwargs):
+    def __init__(self, train=True):
 
         super(BiCnet_TKS, self).__init__()
         resnet2d = resnet50_s1(pretrained=True)
-
+        self.train_mode = train
         self.conv1 = inflate.inflate_conv(resnet2d.conv1, time_dim=1)
         self.bn1 = inflate.inflate_batch_norm(resnet2d.bn1)
         self.relu = nn.ReLU(inplace=True)
@@ -194,10 +194,10 @@ class BiCnet_TKS(nn.Module):
 
         x = 0.5 * xh + 0.5 * xl #[b, 1, c]
 
-        if not self.training:
-            return x
-
         x = x.mean(1)
         f = self.bn(x)
 
-        return f, masks
+        if self.train_mode:
+            return f, masks
+        else:
+            return f

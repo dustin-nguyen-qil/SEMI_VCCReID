@@ -11,7 +11,7 @@ from models.dsa import DSA
 from models.gaitset import GaitSet
 from models.fusion import FusionNet
 
-def build_models(config, num_ids, num_clothes, train=True):
+def build_models(config, num_ids: int = 150, train=True):
 
     if config.MODEL.APP_MODEL == 'c2d':
         app_model = C2DResNet50(config)
@@ -24,7 +24,7 @@ def build_models(config, num_ids, num_clothes, train=True):
     elif config.MODEL.APP_MODEL == 'tclnet':
         app_model = TCLNet(num_classes=num_ids, use_gpu=True)
     elif config.MODEL.APP_MODEL == 'bicnet':
-        app_model = BiCnet_TKS()
+        app_model = BiCnet_TKS(train=train)
 
     if train:
         shape_model = DSA(num_frames=config.DSA.NUM_FRAME, 

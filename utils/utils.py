@@ -21,7 +21,7 @@ def build_model_name():
     if CONFIG.LOSS.MULTI_LOSS_WEIGHTING:
         model_name += '_mlw'
     if CONFIG.MODEL.AGG == "CONCAT":
-        model_name += f'_CONCAT'
+        model_name += f'_concat_m'
     model_name += '.pth'
     return model_name
 

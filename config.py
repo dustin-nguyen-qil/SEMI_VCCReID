@@ -41,14 +41,14 @@ class CONFIG:
             CONTRACTIVE_ATT = True
 
         RES4_STRIDE = 1
-        APP_MODEL = 'bicnet' # c2d, ap3d, i3d, ap3dnl, nl, tclnet, bicnet
+        APP_MODEL = 'c2d' # c2d, ap3d, i3d, ap3dnl, nl, tclnet, bicnet
         APP_FEATURE_DIM = 2048
         FINAL_FEATURE_DIM = 512
         AGG = 'CONCAT'
         if AGG == 'SUM':
             AGG_FEATURE_DIM = FINAL_FEATURE_DIM
         else:
-            AGG_FEATURE_DIM = 2 * FINAL_FEATURE_DIM
+            AGG_FEATURE_DIM = 2048 + 10#2 * FINAL_FEATURE_DIM
 
     @dataclass
     class GAITSET:
@@ -107,6 +107,6 @@ class CONFIG:
 
         START_EPOCH = 0
         MAX_EPOCH = 150
-        RESUME = None  # add checkpoint path here
+        RESUME = None
         # START_EPOCH_CC = 50
         # START_EPOCH_ADV = 50

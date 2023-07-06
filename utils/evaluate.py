@@ -43,6 +43,7 @@ def extract_vid_feature(
         clip_camids = torch.cat((clip_camids, batch_camids.cpu()), dim=0)
         clip_clothes_ids = torch.cat(
             (clip_clothes_ids, batch_clothes_ids.cpu()), dim=0)
+        
     clip_features = torch.cat(clip_features, 0)
 
     # Gather samples from different GPUs

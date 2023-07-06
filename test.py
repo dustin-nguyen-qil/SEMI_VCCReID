@@ -12,7 +12,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 model_name = build_model_name()
-
+print(f"Model Name: {model_name}")
 logging.basicConfig(filename=f"work_space/loggers/test_{model_name}.txt",
                     filemode='a',
                     format='%(asctime)s,%(msecs)d %(name)s %(levelname)s %(message)s',
@@ -117,7 +117,8 @@ def test(model, queryloader, galleryloader, query, gallery):
     Testing
 """
 
-state_dict_path = osp.join(CONFIG.METADATA.SAVE_PATH, model_name)
+# state_dict_path = osp.join(CONFIG.METADATA.SAVE_PATH, model_name)
+state_dict_path = "work_space/save/ccvid_0.00035_16_c2d.pth"
 appearance_model = Inference(CONFIG)
 appearance_model.load_state_dict(torch.load(state_dict_path), strict=False)
 queryloader, galleryloader, query, gallery = build_testloader()
@@ -125,7 +126,7 @@ queryloader, galleryloader, query, gallery = build_testloader()
 (standard_cmc, standard_mAP, sc_cmc, sc_mAP, cc_cmc, cc_mAP) = \
     test(appearance_model, queryloader, galleryloader, query, gallery)
 
-print()
+
 print("==============================")
 
 standard_results = f"Standard | R-1: {standard_cmc[0]:.1f} | R-4: {standard_cmc[4]:.1f} | R-10: {standard_cmc[9]:.1f} | mAP: {standard_mAP:.1f}"

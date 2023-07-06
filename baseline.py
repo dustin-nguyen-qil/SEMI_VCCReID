@@ -115,14 +115,15 @@ class Baseline(LightningModule):
     def on_train_epoch_end(self):
         epoch_loss = sum(self.training_step_outputs) / len(self.training_step_outputs)
         self.log('epoch_loss', epoch_loss)
-        self.training_step_outputs.clear()
+        self.training_step_outputs.clear()                                                                                                                                                                                                                                                                                                                          
 
 class Inference(nn.Module):
     def __init__(self, config) -> None:
         super(Inference, self).__init__()
         
-        self.app_model = build_models(config=config)
+        self.app_model = build_models(config, train=False)
     
-    def forward(self, imgs):
-        return self.app_model(imgs)
+    def forward(self, clip):
+        features = self.app_model(clip)
+        return features
 
