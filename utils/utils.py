@@ -25,15 +25,6 @@ def build_model_name():
     model_name += '.pth'
     return model_name
 
-def is_list_or_tuple(x: Any) -> bool:
-    return isinstance(x, (list, tuple))
-
-
-def clones(module: Any, N: int) -> nn.ModuleList:
-    "Produce N identical layers."
-    return nn.ModuleList([deepcopy(module) for _ in range(N)])
-
-
 def RmBN2dAffine(model):
     for m in model.modules():
         if isinstance(m, nn.BatchNorm2d):

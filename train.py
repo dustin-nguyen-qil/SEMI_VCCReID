@@ -1,7 +1,7 @@
 import torch
 import os.path as osp
 from pytorch_lightning import Trainer
-from pytorch_lightning.callbacks import EarlyStopping, ModelCheckpoint, LearningRateFinder
+from pytorch_lightning.callbacks import EarlyStopping, ModelCheckpoint 
 from pytorch_lightning.loggers import TensorBoardLogger
 from baseline import Baseline
 from config import CONFIG
@@ -16,7 +16,7 @@ print(model_name)
 
 model_checkpoint = ModelCheckpoint(every_n_epochs=5)
 early_stopping = EarlyStopping(monitor='epoch_loss', patience=20, mode='min')
-# lr_finder = LearningRateFinder(max_lr=0.1, )
+
 
 trainer = Trainer(
     accelerator='gpu',
@@ -30,7 +30,7 @@ trainer = Trainer(
 if CONFIG.TRAIN.RESUME is not None:
     ckpt_path=CONFIG.TRAIN.RESUME
     model.load_state_dict(torch.load(ckpt_path)['state_dict'])
-    trainer.fit(model=model)#, ckpt_path=CONFIG.TRAIN.RESUME)
+    trainer.fit(model=model)
 else:
     trainer.fit(model=model)
 

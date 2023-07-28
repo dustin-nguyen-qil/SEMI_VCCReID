@@ -9,15 +9,13 @@ class CONFIG:
     class METADATA:
         LOG_PATH = 'work_space'
         SAVE_PATH = 'work_space/save'
+        TSM_DATA_PATH = 'work_space/tsm'
 
     @dataclass
     class DATA:
         ROOT = 'data'
         DATASET = 'vccr' # vccr, ccvid
-        USE_SAMPLER = True
-        TRAIN_DENSE = True
         TRAIN_BATCH = 16
-
         SAMPLING_STEP = 64
         NUM_WORKERS = 4
         HEIGHT = 256
@@ -41,14 +39,14 @@ class CONFIG:
             CONTRACTIVE_ATT = True
 
         RES4_STRIDE = 1
-        APP_MODEL = 'c2d' # c2d, ap3d, i3d, ap3dnl, nl, tclnet, bicnet
+        APP_MODEL = 'c2dres50' # c2d, ap3d, i3d, ap3dnl, nl
         APP_FEATURE_DIM = 2048
         FINAL_FEATURE_DIM = 512
         AGG = 'CONCAT'
         if AGG == 'SUM':
             AGG_FEATURE_DIM = FINAL_FEATURE_DIM
         else:
-            AGG_FEATURE_DIM = 2048 + 10#2 * FINAL_FEATURE_DIM
+            AGG_FEATURE_DIM = 2048 + 10
 
     @dataclass
     class GAITSET:
@@ -79,11 +77,9 @@ class CONFIG:
         PAIR_LOSS = 'triplet'
         PAIR_S = 16.
         PAIR_M = 0.3
-        CAL = 'cal'
         EPSILON = 0.1
         MOMENTUM = 0.
 
-        MULTI_LOSS_WEIGHTING = False
         APP_LOSS_WEIGHT = 1
         SHAPE1_LOSS_WEIGHT = 0.05
         SHAPE2_LOSS_WEIGHT = 1
@@ -94,7 +90,7 @@ class CONFIG:
 
         @dataclass
         class LR_SCHEDULER:
-            STEPSIZE = [40, 70, 100, 130]
+            STEPSIZE = 40
             DECAY_RATE = 0.1
 
         @dataclass
@@ -103,10 +99,6 @@ class CONFIG:
             LR = 0.0005
             WEIGHT_DECAY = 5e-4
 
-        WITH_GAIT = False
-
         START_EPOCH = 0
         MAX_EPOCH = 150
         RESUME = None
-        # START_EPOCH_CC = 50
-        # START_EPOCH_ADV = 50

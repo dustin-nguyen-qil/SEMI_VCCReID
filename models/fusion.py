@@ -35,10 +35,11 @@ class FusionNet(nn.Module):
     def forward(self, appearance_features: torch.Tensor,
                 shape_features: torch.Tensor) -> torch.Tensor:
         if CONFIG.MODEL.AGG == 'SUM':
+            # if sum, scale the two feature vectors to 512
             appearance = self.appearance_net(appearance_features) # 512
             shape = self.shape_net(shape_features) # 512   
-            agg_features = self.theta(x=appearance, y=shape)
+            agg_features = self.theta(x=appearance, y=shape) # 512
         else: 
-            agg_features = torch.cat((appearance_features, shape_features),dim=1)
+            agg_features = torch.cat((appearance_features, shape_features),dim=1) # 2058
         agg_features = self.bn(agg_features)
         return agg_features

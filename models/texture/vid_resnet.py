@@ -1,5 +1,3 @@
-from typing import Callable, Dict, List, Optional, Tuple, Type, Union
-
 import torch
 from torch import nn
 from torch.nn import functional as F
@@ -7,7 +5,7 @@ from torch.nn import init
 from torchvision import models
 from torchvision.models.resnet import ResNet50_Weights
 
-from ..utils import c3d_blocks, inflate, nonlocal_blocks
+from .utils import c3d_blocks, inflate, nonlocal_blocks
 
 __all__ = [
     'AP3DResNet50',

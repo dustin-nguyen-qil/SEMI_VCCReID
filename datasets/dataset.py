@@ -22,17 +22,12 @@ class VideoDataset(Dataset):
                  spatial_transform=None,
                  temporal_transform=None,
                  get_loader=get_default_video_loader,
-                 dense_sampling=False,
                 ):
-        data, self.num_pids, self.num_clothes = self.read_dataset(data_path)
+        data, self.num_pids = self.read_dataset(data_path)
         self.spatial_transform = spatial_transform
         self.temporal_transform = temporal_transform
         self.loader = get_loader
-        self.train_dense = dense_sampling
-        if self.train_dense:
-            self.dataset = densesampling_for_trainingset(data)
-        else:
-            self.dataset = data
+        self.dataset = densesampling_for_trainingset(data)
             
 
     def __len__(self):
@@ -43,8 +38,7 @@ class VideoDataset(Dataset):
             content = pickle.load(f)
         data = content['data']
         num_pids = content['num_pids']
-        num_clothes = content['num_clothes']
-        return data, num_pids, num_clothes
+        return data, num_pids
 
     def __getitem__(self, index):
         """
@@ -62,17 +56,9 @@ class VideoDataset(Dataset):
             
         """
         tracklet = self.dataset[index]
-        if self.train_dense:
-            (pid, camid, clothes_id, img_paths, xcs, betas, _, _, _) = tracklet
-        else:
-            # (pid, camid, clothes_id, img_paths, xcs, betas, _, _, _) = list(tracklet.values())
-            pid = tracklet['p_id']
-            camid = tracklet['cam_id']
-            clothes_id = tracklet['clothes_id']
-            img_paths = tracklet['img_paths']
-            xcs = tracklet['shape_1024']
-            betas = tracklet['betas']
-
+        
+        (pid, camid, clothes_id, img_paths, xcs, betas, _, _, _) = tracklet
+        
         if self.temporal_transform is not None:
             img_paths_tt = self.temporal_transform(img_paths)
 
@@ -116,7 +102,7 @@ class TestDataset(Dataset):
                  seq_len: int=16,
                  stride: int=4
                 ):
-        data, self.num_pids, self.num_clothes = self.read_dataset(data_path)
+        data, self.num_pids = self.read_dataset(data_path)
         self.spatial_transform = spatial_transform
         self.temporal_transform = temporal_transform
         self.loader = get_loader
@@ -130,8 +116,7 @@ class TestDataset(Dataset):
             content = pickle.load(f)
         data = content['data']
         num_pids = content['num_pids']
-        num_clothes = content['num_clothes']
-        return data, num_pids, num_clothes
+        return data, num_pids
 
     def __getitem__(self, index):
         """
@@ -153,8 +138,6 @@ class TestDataset(Dataset):
         if self.temporal_transform is not None:
             img_paths = self.temporal_transform(img_paths)
         
-        subset_indices = [img_paths.index(img_path) for img_path in img_paths]
-        
         clip = self.loader(img_paths)
 
         if self.spatial_transform is not None:
@@ -163,5 +146,5 @@ class TestDataset(Dataset):
 
         # trans T x C x H x W to C x T x H x W
         clip = torch.stack(clip, 0).permute(1, 0, 2, 3)
-        return clip, pid, camid, clothes_id
+        return clip, pid, camid, clothes_id, img_paths
         

@@ -63,33 +63,29 @@ def densesampling_for_trainingset(dataset, sampling_step=64):
     '''
     new_dataset = []
     for item in dataset:
-        # (pid, camid, clothes_id, img_paths, xcs, betas, joints3d, cam, pose) = list(item.values())
         pid = item['p_id']
         camid = item['cam_id']
         clothes_id = item['clothes_id']
         img_paths = item['img_paths']
         xcs = item['shape_1024']
         betas = item['betas']
-        joints3d = item['joints3d']
-        pose = item['pose']
-        cam = item['cam']
         
         if sampling_step != 0:
             num_sampling = len(img_paths) // sampling_step
             if num_sampling == 0:
-                new_dataset.append((pid, camid, clothes_id, img_paths, xcs, betas, joints3d, cam, pose))
+                new_dataset.append((pid, camid, clothes_id, img_paths, xcs, betas))
             else:
                 for idx in range(num_sampling):
                     if idx == num_sampling - 1:
                         new_dataset.append(
-                            (pid, camid, clothes_id, img_paths[idx * sampling_step:], xcs, betas, joints3d, cam, pose))
+                            (pid, camid, clothes_id, img_paths[idx * sampling_step:], xcs, betas))
                     else:
                         new_dataset.append(
                             (pid, camid, clothes_id,
                              img_paths[idx * sampling_step:(idx + 1) * sampling_step], 
-                             xcs, betas, joints3d, cam, pose))
+                             xcs, betas))
         else:
-            new_dataset.append((pid, camid, clothes_id, img_paths, xcs, betas, joints3d, cam, pose))
+            new_dataset.append((pid, camid, clothes_id, img_paths, xcs, betas))
 
     return new_dataset
 

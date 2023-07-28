@@ -5,8 +5,6 @@ from utils.losses.contrastive_loss import ContrastiveLoss
 from utils.losses.arcface_loss import ArcFaceLoss
 from utils.losses.cosface_loss import CosFaceLoss, PairwiseCosFaceLoss
 from utils.losses.circle_loss import CircleLoss, PairwiseCircleLoss
-from utils.losses.clothes_based_adversarial_loss import ClothesBasedAdversarialLoss, ClothesBasedAdversarialLossWithMemoryBank
-from utils.losses.div_reg_loss import DivRegLoss
 
 def build_losses(config, num_train_clothes):
     # Build identity classification loss
@@ -35,33 +33,25 @@ def build_losses(config, num_train_clothes):
     else:
         raise KeyError("Invalid pairwise loss: '{}'".format(config.LOSS.PAIR_LOSS))
     
-    if config.MODEL.APP_MODEL == 'bicnet':
-        criterion_div = DivRegLoss()
-    else:
-        criterion_div = None
-    
     # Build losses for shape module
     criterion_shape_mse = nn.MSELoss()
-    return criterion_cla, criterion_pair, criterion_shape_mse, criterion_div
+    return criterion_cla, criterion_pair, criterion_shape_mse
     
 
 def compute_loss(config,
                  pids,
                  criterion_cla, 
-                 criterion_pair,
-                 criterion_div, 
+                 criterion_pair, 
                  criterion_shape_mse,
                  app_feature, 
                  app_logits, 
-                 masks,
                  betas,
                  shape1_out,
                  shape1_logits,
                  shape2_feature,
                  shape2_logits,
                  fused_feature, 
-                 fused_logits,
-                 multi_loss = None):
+                 fused_logits):
     
     shape1_mse = criterion_shape_mse(shape1_out, betas)
     shape1_id_loss = criterion_cla(shape1_logits, pids)
@@ -69,30 +59,15 @@ def compute_loss(config,
     shape2_id_loss = criterion_cla(shape2_logits, pids)
     shape2_pair_loss = criterion_pair(shape2_feature, pids)
 
-    if config.MODEL.APP_MODEL == 'tclnet':
-        app_id_loss, app_pair_loss = 0, 0
-        for i in range(len(app_logits)):
-            app_id_loss += criterion_cla(app_logits[i], pids)
-            app_pair_loss += criterion_pair(app_feature[i], pids)
-    else:
-        app_id_loss = criterion_cla(app_logits, pids)
-        app_pair_loss = criterion_pair(app_feature, pids)
-    
-    if masks is not None:
-        div_loss = criterion_div(masks)
-    else:
-        div_loss = 0.
+    app_id_loss = criterion_cla(app_logits, pids)
+    app_pair_loss = criterion_pair(app_feature, pids)
 
     fused_id_loss = criterion_cla(fused_logits, pids)
     fused_pair_loss = criterion_pair(fused_feature, pids)
 
-    if multi_loss is not None:
-        loss = multi_loss([(fused_id_loss + fused_pair_loss), (app_id_loss + app_pair_loss), 
-                           (shape2_id_loss + shape2_pair_loss), (0.1*shape1_id_loss + 0.5*shape1_mse)])
-    else:
-        loss = config.LOSS.FUSED_LOSS_WEIGHT * (fused_id_loss + fused_pair_loss) + \
-                config.LOSS.APP_LOSS_WEIGHT * (app_id_loss + app_pair_loss + 0.01*div_loss) + \
-                config.LOSS.SHAPE2_LOSS_WEIGHT * (shape2_id_loss + shape2_pair_loss) + \
-                config.LOSS.SHAPE1_LOSS_WEIGHT * (0.1*shape1_id_loss + 0.5*shape1_mse)
+    loss = config.LOSS.FUSED_LOSS_WEIGHT * (fused_id_loss + fused_pair_loss) + \
+            config.LOSS.APP_LOSS_WEIGHT * (app_id_loss + app_pair_loss) + \
+            config.LOSS.SHAPE2_LOSS_WEIGHT * (shape2_id_loss + shape2_pair_loss) + \
+            config.LOSS.SHAPE1_LOSS_WEIGHT * (0.1*shape1_id_loss + 0.5*shape1_mse)
         
     return loss 

@@ -50,34 +50,20 @@ def build_trainloader():
         train_data_path, 
         st_train, 
         tt_train, 
-        dense_sampling=config.DATA.TRAIN_DENSE
         )
     
-    if config.DATA.USE_SAMPLER:
-        sampler = RandomIdentitySampler(train.dataset, config.DATA.NUM_INSTANCES)
+    sampler = RandomIdentitySampler(train.dataset, config.DATA.NUM_INSTANCES)
 
-        trainloader = DataLoader(
-            train, 
-            batch_size=config.DATA.TRAIN_BATCH,
-            sampler=sampler,
-            num_workers=config.DATA.NUM_WORKERS,
-            pin_memory=True, 
-            drop_last=True
-        )
-    else:
-        trainloader = DataLoader(
-            train, 
-            shuffle=True,
-            batch_size=config.DATA.TRAIN_BATCH,
-            num_workers=config.DATA.NUM_WORKERS,
-            pin_memory=True, 
-            drop_last=True
-        )
-    if config.DATA.USE_SAMPLER:
-        return trainloader, train, sampler
-    else:
-        return trainloader, train
-
+    trainloader = DataLoader(
+        train, 
+        batch_size=config.DATA.TRAIN_BATCH,
+        sampler=sampler,
+        num_workers=config.DATA.NUM_WORKERS,
+        pin_memory=True, 
+        drop_last=True
+    )
+    return trainloader, train, sampler
+    
 def build_testloader():
     """
     Build query and gallery loader
