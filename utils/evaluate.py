@@ -26,17 +26,15 @@ def concat_all_gather(tensors: Union[torch.Tensor, List[torch.Tensor]],
 @torch.inference_mode()
 def extract_vid_feature(
         model: Union[nn.Module, Type[nn.Module]], dataloader: DataLoader,
-        vid2clip_index: List[int], data_length: int, logger
+        vid2clip_index: List[int], data_length: int
 ) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor]:
     # In build_dataloader, each original test video is split into a series of equilong clips.
     # During test, we first extact features for all clips
     clip_features, clip_pids, clip_camids, clip_clothes_ids= [], torch.tensor(
         []), torch.tensor([]), torch.tensor([])
     for batch_idx, (vids, batch_pids, batch_camids, batch_clothes_ids) in enumerate(tqdm(dataloader)):
-        if (batch_idx + 1) % 200 == 0:
-            logger.info("{}/{}".format(batch_idx + 1, len(dataloader)))
         vids = vids.cuda()
-        batch_features = model(vids)
+        batch_features, _ = model(vids)
         clip_features.append(batch_features.cpu())
         clip_pids = torch.cat((clip_pids, batch_pids.cpu()), dim=0)
         clip_camids = torch.cat((clip_camids, batch_camids.cpu()), dim=0)

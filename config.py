@@ -61,9 +61,18 @@ class CONFIG:
 
     @dataclass
     class SA:
+        TYPE = 'asa' # asa, dsa 
         NUM_FRAME = 8
         NUM_SHAPE_PARAMETERS = 10
         
+        @dataclass
+        class ASA:
+            HIDDEN_SIZE = 1024
+            NUM_LAYERS = 2
+            FEATURE_POOL = 'attention'
+            ATT_LAYERS = 3
+            ATT_SIZE = 1024
+            ATT_DROPOUT = 0.2
 
     @dataclass
     class LOSS:

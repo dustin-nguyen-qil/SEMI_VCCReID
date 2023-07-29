@@ -4,6 +4,7 @@ from models.texture.vid_resnet import *
 from models.tsm.tsm import TSM
 from models.fusion import FusionNet
 from models.tsm.dsa import DSA 
+from models.tsm.asa import ASA
 
 __factory = {
     'c2dres50': C2DResNet50,
@@ -28,23 +29,28 @@ def build_models(config, num_ids: int = 150, train=True):
             param.requires_grad = False
 
         # frame-wise shape aggregation
-        shape_agg = DSA(num_frames=config.SA.NUM_FRAME, 
-                        num_shape_parameters=config.SA.NUM_SHAPE_PARAMETERS)
+        if config.SA.TYPE == 'asa':
+            shape_agg = ASA(
+                rnn_size=config.SA.ASA.HIDDEN_SIZE, 
+                input_size=config.SA.NUM_SHAPE_PARAMETERS, 
+                num_layers=config.SA.ASA.NUM_LAYERS, 
+                output_size=config.SA.NUM_SHAPE_PARAMETERS, 
+                feature_pool=config.SA.ASA.FEATURE_POOL, 
+                attention_size=config.SA.ASA.ATT_SIZE, 
+                attention_dropout=config.SA.ASA.ATT_DROPOUT, 
+                attention_layers=config.SA.ASA.ATT_LAYERS)
+        else:   
+            shape_agg = DSA(num_frames=config.SA.NUM_FRAME, 
+                            num_shape_parameters=config.SA.NUM_SHAPE_PARAMETERS)
         
         fusion = FusionNet(out_features=config.MODEL.FINAL_FEATURE_DIM)
 
         shape_classifier = Classifier(feature_dim=config.SA.NUM_SHAPE_PARAMETERS, 
                                             num_classes=num_ids)
-        # shape2_classifier = Classifier(feature_dim=config.DSA.NUM_SHAPE_PARAMETERS, 
-        #                                     num_classes=num_ids)
-        # app_classifier = Classifier(feature_dim=config.MODEL.APP_FEATURE_DIM, 
-        #                                     num_classes=num_ids)
         id_classifier = Classifier(feature_dim=config.MODEL.AGG_FEATURE_DIM,
                                                     num_classes=num_ids)
 
         return app_model, tsm, shape_agg, shape_classifier, fusion, id_classifier
-        # return app_model, app_classifier, tsm, shape1_classifier, shape2_classifier, \
-        #     fusion, id_classifier
     else:
         return app_model
     

@@ -7,7 +7,8 @@ def init_weights(m):
         m.bias.data.fill_(0.01)
 
 class SelfAttention(nn.Module):
-    def __init__(self, attention_size,
+    def __init__(self, 
+                 attention_size,
                  batch_first=False,
                  layers=1,
                  dropout=.0,
@@ -27,7 +28,7 @@ class SelfAttention(nn.Module):
             modules.append(activation)
             modules.append(nn.Dropout(dropout))
 
-        # last attention layer must output 1
+        # last attention layer must output a scalar
         modules.append(nn.Linear(attention_size, 1))
         modules.append(activation)
         modules.append(nn.Dropout(dropout))
