@@ -24,6 +24,8 @@ def build_models(config, num_ids: int = 150, train=True):
     if train:
         tsm = TSM(n_layers=2, hidden_size=1024, add_linear=True, use_residual=True)
         tsm = load_pretrained(tsm, 'work_space/tsm/tsm_model_wo.pth.tar')
+        for param in tsm.parameters():
+            param.requires_grad = False
 
         # frame-wise shape aggregation
         shape_agg = DSA(num_frames=config.SA.NUM_FRAME, 

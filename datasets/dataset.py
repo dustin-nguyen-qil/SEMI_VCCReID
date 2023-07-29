@@ -19,12 +19,12 @@ class VideoDataset(Dataset):
 
     def __init__(self,
                  data_path,
-                 transform=None,
+                 spatial_transform=None,
                  temporal_transform=None,
                  get_loader=get_default_video_loader,
                 ):
         data, self.num_pids = self.read_dataset(data_path)
-        self.transform = transform
+        self.spatial_transform = spatial_transform
         self.temporal_transform = temporal_transform
         self.loader = get_loader
         self.dataset = densesampling_for_trainingset(data)
@@ -70,9 +70,9 @@ class VideoDataset(Dataset):
         
         clip = self.loader(img_paths_tt)
 
-        if self.transform is not None:
-            self.transform.randomize_parameters()
-            clip = [self.transform(img) for img in clip]
+        if self.spatial_transform is not None:
+            self.spatial_transform.randomize_parameters()
+            clip = [self.spatial_transform(img) for img in clip]
 
         # trans T x C x H x W to C x T x H x W
         clip = torch.stack(clip, 0).permute(1, 0, 2, 3)
@@ -98,14 +98,14 @@ class TestDataset(Dataset):
 
     def __init__(self,
                  data_path,
-                 transform=None,
+                 spatial_transform=None,
                  temporal_transform=None,
                  get_loader=get_default_video_loader,
                  seq_len: int=16,
                  stride: int=4
                 ):
         data, self.num_pids = self.read_dataset(data_path)
-        self.transform = transform
+        self.spatial_transform = spatial_transform
         self.temporal_transform = temporal_transform
         self.loader = get_loader
         self.dataset, self.vid2clip_index = recombination_for_testset(data, seq_len, stride)
@@ -143,9 +143,9 @@ class TestDataset(Dataset):
         
         clip = self.loader(img_paths)
 
-        if self.transform is not None:
-            self.transform.randomize_parameters()
-            clip = [self.transform(img) for img in clip]
+        if self.spatial_transform is not None:
+            self.spatial_transform.randomize_parameters()
+            clip = [self.spatial_transform(img) for img in clip]
 
         # trans T x C x H x W to C x T x H x W
         clip = torch.stack(clip, 0).permute(1, 0, 2, 3)
