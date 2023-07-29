@@ -67,27 +67,63 @@ def densesampling_for_trainingset(dataset, sampling_step=64):
         camid = item['cam_id']
         clothes_id = item['clothes_id']
         img_paths = item['img_paths']
-        xcs = item['shape_1024']
-        betas = item['betas']
         
         if sampling_step != 0:
             num_sampling = len(img_paths) // sampling_step
             if num_sampling == 0:
-                new_dataset.append((pid, camid, clothes_id, img_paths, xcs, betas))
+                new_dataset.append((pid, camid, clothes_id, img_paths))
             else:
                 for idx in range(num_sampling):
                     if idx == num_sampling - 1:
                         new_dataset.append(
-                            (pid, camid, clothes_id, img_paths[idx * sampling_step:], xcs, betas))
+                            (pid, camid, clothes_id, img_paths[idx * sampling_step:]))
                     else:
                         new_dataset.append(
                             (pid, camid, clothes_id,
                              img_paths[idx * sampling_step:(idx + 1) * sampling_step], 
-                             xcs, betas))
+                            ))
         else:
-            new_dataset.append((pid, camid, clothes_id, img_paths, xcs, betas))
+            new_dataset.append((pid, camid, clothes_id, img_paths))
 
     return new_dataset
+
+# def densesampling_for_trainingset(dataset, sampling_step=64):
+#     ''' Split all videos in training set into lots of clips for dense sampling.
+
+#     Args:
+#         dataset (list): input dataset, each video is organized as (img_paths, pid, camid, clothes_id)
+#         sampling_step (int): sampling step for dense sampling
+
+#     Returns:
+#         new_dataset (list): output dataset
+#     '''
+#     new_dataset = []
+#     for item in dataset:
+#         pid = item['p_id']
+#         camid = item['cam_id']
+#         clothes_id = item['clothes_id']
+#         img_paths = item['img_paths']
+#         xcs = item['shape_1024']
+#         betas = item['betas']
+        
+#         if sampling_step != 0:
+#             num_sampling = len(img_paths) // sampling_step
+#             if num_sampling == 0:
+#                 new_dataset.append((pid, camid, clothes_id, img_paths, xcs, betas))
+#             else:
+#                 for idx in range(num_sampling):
+#                     if idx == num_sampling - 1:
+#                         new_dataset.append(
+#                             (pid, camid, clothes_id, img_paths[idx * sampling_step:], xcs, betas))
+#                     else:
+#                         new_dataset.append(
+#                             (pid, camid, clothes_id,
+#                              img_paths[idx * sampling_step:(idx + 1) * sampling_step], 
+#                              xcs, betas))
+#         else:
+#             new_dataset.append((pid, camid, clothes_id, img_paths, xcs, betas))
+
+#     return new_dataset
 
 def recombination_for_testset(dataset, seq_len=16, stride=4):
         ''' Split all videos in test set into lots of equilong clips.

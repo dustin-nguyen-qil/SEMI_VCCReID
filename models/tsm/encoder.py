@@ -1,5 +1,5 @@
 import torch.nn as nn
-import torchvision.models.resnet as resnet
+from torchvision.models import resnet, ResNet50_Weights
 import torch.nn.functional as F
 
 class TemporalEncoder(nn.Module):
@@ -84,10 +84,7 @@ class Bottleneck(nn.Module):
 
 
 class Backbone(nn.Module):
-    """
-    SMPL Iterative Regressor with ResNet50 backbone
-    """
-    def __init__(self, block, layers, smpl_mean_params):
+    def __init__(self, block, layers):
         self.inplanes = 64
         super(Backbone, self).__init__()
         npose = 24 * 6
@@ -143,7 +140,8 @@ def ft(pretrained=True, **kwargs):
     """
     model = Backbone(Bottleneck, [3, 4, 6, 3], **kwargs)
     if pretrained:
-        resnet_imagenet = resnet.resnet50(pretrained=True)
+        weights = ResNet50_Weights.DEFAULT
+        resnet_imagenet = resnet.resnet50(weights)
         model.load_state_dict(resnet_imagenet.state_dict(), strict=False)
     return model
 

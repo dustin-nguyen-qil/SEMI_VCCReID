@@ -5,11 +5,10 @@ import torch
 import numpy as np
 import os.path as osp
 from smplx import SMPL as _SMPL
-from smplx.utils import ModelOutput, SMPLOutput
+from smplx.utils import SMPLOutput
 from smplx.lbs import vertices2joints
 
-from .core.config import VIBE_DATA_DIR
-
+TSM_DATA_PATH = 'work_space/tsm'
 # Map joints to SMPL joints
 JOINT_MAP = {
     'OP Nose': 24, 'OP Neck': 12, 'OP RShoulder': 17,
@@ -51,9 +50,9 @@ JOINT_NAMES = [
 ]
 
 JOINT_IDS = {JOINT_NAMES[i]: i for i in range(len(JOINT_NAMES))}
-JOINT_REGRESSOR_TRAIN_EXTRA = osp.join(VIBE_DATA_DIR, 'J_regressor_extra.npy')
-SMPL_MEAN_PARAMS = osp.join(VIBE_DATA_DIR, 'smpl_mean_params.npz')
-SMPL_MODEL_DIR = VIBE_DATA_DIR
+JOINT_REGRESSOR_TRAIN_EXTRA = osp.join(TSM_DATA_PATH, 'J_regressor_extra.npy')
+SMPL_MEAN_PARAMS = osp.join(TSM_DATA_PATH, 'smpl_mean_params.npz')
+SMPL_MODEL_DIR = TSM_DATA_PATH
 H36M_TO_J17 = [6, 5, 4, 1, 2, 3, 16, 15, 14, 11, 12, 13, 8, 10, 0, 7, 9]
 H36M_TO_J14 = H36M_TO_J17[:14]
 

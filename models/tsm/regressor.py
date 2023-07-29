@@ -3,7 +3,7 @@ import torch
 import numpy as np
 import torch.nn as nn
 from .utils.geometry import rotation_matrix_to_angle_axis, rot6d_to_rotmat
-from smpl import SMPL, SMPL_MODEL_DIR, H36M_TO_J14, SMPL_MEAN_PARAMS
+from .smpl import SMPL, SMPL_MODEL_DIR, H36M_TO_J14, SMPL_MEAN_PARAMS
 
 
 class Regressor(nn.Module):

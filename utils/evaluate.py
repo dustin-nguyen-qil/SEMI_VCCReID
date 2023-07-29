@@ -32,7 +32,7 @@ def extract_vid_feature(
     # During test, we first extact features for all clips
     clip_features, clip_pids, clip_camids, clip_clothes_ids= [], torch.tensor(
         []), torch.tensor([]), torch.tensor([])
-    for batch_idx, (vids, batch_pids, batch_camids, batch_clothes_ids, _) in enumerate(tqdm(dataloader)):
+    for batch_idx, (vids, batch_pids, batch_camids, batch_clothes_ids) in enumerate(tqdm(dataloader)):
         if (batch_idx + 1) % 200 == 0:
             logger.info("{}/{}".format(batch_idx + 1, len(dataloader)))
         vids = vids.cuda()

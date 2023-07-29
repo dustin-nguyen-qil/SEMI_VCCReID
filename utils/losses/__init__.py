@@ -6,7 +6,7 @@ from utils.losses.arcface_loss import ArcFaceLoss
 from utils.losses.cosface_loss import CosFaceLoss, PairwiseCosFaceLoss
 from utils.losses.circle_loss import CircleLoss, PairwiseCircleLoss
 
-def build_losses(config, num_train_clothes):
+def build_losses(config):
     # Build identity classification loss
     if config.LOSS.CLA_LOSS == 'crossentropy':
         criterion_cla = nn.CrossEntropyLoss()
@@ -43,31 +43,32 @@ def compute_loss(config,
                  criterion_cla, 
                  criterion_pair, 
                  criterion_shape_mse,
-                 app_feature, 
-                 app_logits, 
                  betas,
-                 shape1_out,
-                 shape1_logits,
-                 shape2_feature,
-                 shape2_logits,
+                 framewise_shape, 
+                 mean_shape_logits,
                  fused_feature, 
                  fused_logits):
+                    # app_feature, 
+                    #  app_logits, 
+                    # shape2_feature,
+                    #     shape2_logits,
     
-    shape1_mse = criterion_shape_mse(shape1_out, betas)
-    shape1_id_loss = criterion_cla(shape1_logits, pids)
+    shape1_mse = criterion_shape_mse(framewise_shape, betas)
+    shape1_id_loss = criterion_cla(mean_shape_logits, pids)
 
-    shape2_id_loss = criterion_cla(shape2_logits, pids)
-    shape2_pair_loss = criterion_pair(shape2_feature, pids)
+    # shape2_id_loss = criterion_cla(shape2_logits, pids)
+    # shape2_pair_loss = criterion_pair(shape2_feature, pids)
 
-    app_id_loss = criterion_cla(app_logits, pids)
-    app_pair_loss = criterion_pair(app_feature, pids)
+    # app_id_loss = criterion_cla(app_logits, pids)
+    # app_pair_loss = criterion_pair(app_feature, pids)
 
     fused_id_loss = criterion_cla(fused_logits, pids)
     fused_pair_loss = criterion_pair(fused_feature, pids)
 
-    loss = config.LOSS.FUSED_LOSS_WEIGHT * (fused_id_loss + fused_pair_loss) + \
-            config.LOSS.APP_LOSS_WEIGHT * (app_id_loss + app_pair_loss) + \
-            config.LOSS.SHAPE2_LOSS_WEIGHT * (shape2_id_loss + shape2_pair_loss) + \
-            config.LOSS.SHAPE1_LOSS_WEIGHT * (0.1*shape1_id_loss + 0.5*shape1_mse)
+    loss = config.LOSS.FUSED_LOSS_WEIGHT * (0.5*fused_id_loss + 0.5*fused_pair_loss) + \
+            config.LOSS.SHAPE_LOSS_WEIGHT * (0.1*shape1_id_loss + 0.5*shape1_mse) #+ \
+            # config.LOSS.APP_LOSS_WEIGHT * (app_id_loss + app_pair_loss) + \ 
+            # config.LOSS.SHAPE2_LOSS_WEIGHT * (shape2_id_loss + shape2_pair_loss) 
+            
         
     return loss 

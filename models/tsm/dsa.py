@@ -107,12 +107,12 @@ class DSA(nn.Module):
             torch.Tensor
         """
         beta = self.encoder(xc) # 8x10
-        beta_mean = torch.mean(input=beta, dim=1).unsqueeze(1) # 1x10
-        beta_diff = beta - beta_mean
+        mean_shape = torch.mean(input=beta, dim=1).unsqueeze(1) # 1x10
+        beta_diff = beta - mean_shape
         wd = self.intra_net.forward(beta_diff=beta_diff.unsqueeze(1))
         wt = self.inter_net.forward(beta_diff=beta_diff.unsqueeze(1))
         ws = wd * wt
         ws = torch.softmax(ws, dim=2)
         beta_s = beta * ws
-        beta_s = torch.sum(beta_s, dim=1)
-        return beta, beta_mean.squeeze(dim=1), beta_s
+        videowise_shape = torch.sum(beta_s, dim=1)
+        return beta, mean_shape.squeeze(dim=1), videowise_shape

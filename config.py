@@ -1,6 +1,4 @@
 from dataclasses import dataclass
-import os.path as osp
-import torch 
 from torchvision import transforms as T
 
 @dataclass
@@ -9,7 +7,6 @@ class CONFIG:
     class METADATA:
         LOG_PATH = 'work_space'
         SAVE_PATH = 'work_space/save'
-        TSM_DATA_PATH = 'work_space/tsm'
 
     @dataclass
     class DATA:
@@ -63,7 +60,7 @@ class CONFIG:
 
 
     @dataclass
-    class DSA:
+    class SA:
         NUM_FRAME = 8
         NUM_SHAPE_PARAMETERS = 10
         
@@ -81,9 +78,9 @@ class CONFIG:
         MOMENTUM = 0.
 
         APP_LOSS_WEIGHT = 1
-        SHAPE1_LOSS_WEIGHT = 0.05
+        SHAPE_LOSS_WEIGHT = 0.5
         SHAPE2_LOSS_WEIGHT = 1
-        FUSED_LOSS_WEIGHT = 0.1
+        FUSED_LOSS_WEIGHT = 1
 
     @dataclass
     class TRAIN:
@@ -100,5 +97,5 @@ class CONFIG:
             WEIGHT_DECAY = 5e-4
 
         START_EPOCH = 0
-        MAX_EPOCH = 150
+        MAX_EPOCH = 120
         RESUME = None

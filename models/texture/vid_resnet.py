@@ -167,11 +167,12 @@ class ResNet503D(nn.Module):
         # spatial max pooling
         x = F.max_pool2d(x, x.size()[2:])
         x = x.view(b, t, -1)
-        # temporal avg pooling
-        x = x.mean(1)
-        f = self.bn(x)
 
-        return f
+        # temporal avg pooling
+        f = x.mean(1)
+        f = self.bn(f)
+
+        return f, x
 
 
 def C2DResNet50(config, **kwargs):
