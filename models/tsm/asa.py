@@ -45,7 +45,7 @@ class ASA(nn.Module):
         #sequence shape: batch_size, sequence length, input_size
         batch_size, seq_len, input_size = sequence.shape
         sequence = torch.transpose(sequence, 0, 1)
-
+        mean_shape = torch.mean(sequence, dim=0)
         outputs, state = self.gru(sequence)
 
         if self.feature_pool == 'concat':
@@ -60,4 +60,4 @@ class ASA(nn.Module):
         else:
             output = self.fc(outputs[-1])
         
-        return output 
+        return mean_shape, output

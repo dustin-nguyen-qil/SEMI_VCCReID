@@ -106,7 +106,7 @@ class DSA(nn.Module):
         Returns:
             torch.Tensor
         """
-        beta = self.encoder(xc) # 8x10
+        beta = self.encoder(xc)
         mean_shape = torch.mean(input=beta, dim=1).unsqueeze(1) # 1x10
         beta_diff = beta - mean_shape
         wd = self.intra_net.forward(beta_diff=beta_diff.unsqueeze(1))

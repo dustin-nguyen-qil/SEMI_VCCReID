@@ -66,12 +66,15 @@ class Baseline(LightningModule):
             shape_1024s.append(shape_1024)
         betas = torch.stack(betas, dim=0)
         shape_1024s = torch.stack(shape_1024s, dim=0)
-
-        framewise_shapes, mean_shapes, videowise_shapes = self.shape_agg(shape_1024s)
-        mean_shape_logits = self.shape_classifier(mean_shapes)
-
+        if CONFIG.SA.TYPE == 'dsa':
+            framewise_shapes, mean_shapes, videowise_shapes = self.shape_agg(shape_1024s)
+            mean_shape_logits = self.shape_classifier(mean_shapes)
+        else:
+            mean_shapes, videowise_shapes = self.shape_agg(betas)
+            mean_shape_logits = self.shape_classifier(mean_shapes)
+            betas, framewise_shapes = None, None
         return betas, framewise_shapes, mean_shape_logits, videowise_shapes
-    
+
     def fusion(self, app_feature, shape_feature):
         final_feature = self.fusion_net(app_feature, shape_feature)
         return final_feature
@@ -83,7 +86,8 @@ class Baseline(LightningModule):
         videowise_app, framewise_app_features = self.app_forward(clip)
         
         betas, framewise_shapes, mean_shape_logits, videowise_shapes = self.shape_forward(framewise_app_features)
-        
+             
+
         fused_feature = self.fusion(videowise_app, videowise_shapes)
         fused_logits = self.id_classifier(fused_feature)
 
