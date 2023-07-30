@@ -106,6 +106,15 @@ bash main.sh
 
 If you want to train from checkpoint, add checkpoint path to `config.py`. 
 
+#### Run evaluation only
+
+- Download our pretrained model from [here], put it in `work_space/save`.
+- Replace the path to the pretrained model in `test.py`
+- Run 
+```bash
+python test.py
+```
+
 ## Citation
 
 If you find this repo helpful, please cite:
