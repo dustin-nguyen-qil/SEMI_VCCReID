@@ -8,6 +8,7 @@ class ASA(nn.Module):
     def __init__(self,
                  rnn_size, 
                  input_size,
+                 num_shape_params,
                  num_layers,
                  output_size,
                  feature_pool='concat',
@@ -16,7 +17,8 @@ class ASA(nn.Module):
                  attention_layers=1,
                  attention_dropout=0.5):
         super(ASA, self).__init__()
-        self.input_size = input_size # 10: num of shape params coefficients
+        self.input_size = input_size 
+        self.num_shape_params = num_shape_params
         self.rnn_size = rnn_size
         self.feature_pool = feature_pool
         self.num_layers = num_layers
@@ -24,7 +26,9 @@ class ASA(nn.Module):
         self.attention_layers = attention_layers
         self.attention_dropout = attention_dropout
 
-        self.gru = nn.GRU(self.input_size, self.rnn_size, num_layers=num_layers)
+        self.layer1 = nn.Linear(in_features=self.input_size, out_features=self.num_shape_params)
+
+        self.gru = nn.GRU(self.num_shape_params, self.rnn_size, num_layers=self.num_layers)
 
         linear_size = self.rnn_size if not self.feature_pool == 'concat' else self.rnn_size * 2
 
@@ -44,9 +48,10 @@ class ASA(nn.Module):
     def forward(self, sequence):
         #sequence shape: batch_size, sequence length, input_size
         batch_size, seq_len, input_size = sequence.shape
-        sequence = torch.transpose(sequence, 0, 1)
-        mean_shape = torch.mean(sequence, dim=0)
-        outputs, state = self.gru(sequence)
+
+        framewise_shape = self.layer1(sequence)
+        mean_shape = torch.mean(framewise_shape, dim=1)
+        outputs, state = self.gru(framewise_shape)
 
         if self.feature_pool == 'concat':
             outputs = F.relu(outputs)
@@ -54,10 +59,11 @@ class ASA(nn.Module):
             max_pool = F.adaptive_avg_pool1d(outputs.permute(1, 2, 0), 1).view(batch_size, -1)
             output = self.fc(torch.cat([avg_pool, max_pool], dim=1))
         elif self.feature_pool == 'attention':
-            outputs = outputs.permute(1, 0, 2)
             y, attentions = self.attention(outputs)
             output =  self.fc(y)
         else:
             output = self.fc(outputs[-1])
         
-        return mean_shape, output
+        videowise_shape = output
+        
+        return framewise_shape, mean_shape, videowise_shape

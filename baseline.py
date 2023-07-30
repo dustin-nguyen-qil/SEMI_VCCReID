@@ -70,7 +70,7 @@ class Baseline(LightningModule):
             framewise_shapes, mean_shapes, videowise_shapes = self.shape_agg(shape_1024s)
             mean_shape_logits = self.shape_classifier(mean_shapes)
         else:
-            mean_shapes, videowise_shapes = self.shape_agg(betas)
+            mean_shapes, videowise_shapes = self.shape_agg(shape_1024s)
             mean_shape_logits = self.shape_classifier(mean_shapes)
             betas, framewise_shapes = None, None
         return betas, framewise_shapes, mean_shape_logits, videowise_shapes
