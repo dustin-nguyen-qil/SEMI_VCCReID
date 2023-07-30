@@ -70,18 +70,11 @@ python datasets/prepare.py --root "/media/dustin/DATA/Research/Video-based ReID"
 
 ### Configuration options
 
-Go to `./config.py` to modify configurations accordingly
-- Dataset (VCCR or CCVID)
-- Number of epochs
-- Batch size
-- Learning rate
-- CNN backbone (according to model names above)
-
-If training from checkpoint, copy checkpoint path and paste to RESUME in `./config.py`.
+Go to `./config.py` to modify configurations if needed: Dataset (VCCR or CCVID), number of epochs, batch size learning rate, CNN backbone (according to model names above), etc.
 
 ### Run baseline
 
-Create a folder named `work_space` inside the repository, then create two subfolders named `save` and `output`.
+Create a folder named `work_space` as below.
 
 Download the pretrained SPIN model and the SMPL mean parameters needed to train the 3D regressor from [here](https://uofh-my.sharepoint.com/:f:/g/personal/dnguy222_cougarnet_uh_edu/EksKjRj1EDpMurG85R79_7kBO95Mu_nFxPuMdMmFSKZkZg?e=1TDLnW) (password: dustinqil). Put it inside `work_space`.
 
@@ -104,11 +97,11 @@ bash main.sh
 - Trained model will be automatically saved to `work_space/save`.
 - Testing results will be automatically saved to `work_space/output`.
 
-If you want to train from checkpoint, add checkpoint path to `config.py`. 
+If you want to train from checkpoint, add checkpoint path to RESUME in `config.py`. 
 
 #### Run evaluation only
 
-- Download our pretrained model from [here], put it in `work_space/save`.
+- Download our pretrained model from [here](), put it in `work_space/save`.
 - Replace the path to the pretrained model in `test.py`
 - Run 
 ```bash
