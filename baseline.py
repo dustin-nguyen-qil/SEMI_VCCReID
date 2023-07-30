@@ -66,13 +66,8 @@ class Baseline(LightningModule):
             shape_1024s.append(shape_1024)
         betas = torch.stack(betas, dim=0)
         shape_1024s = torch.stack(shape_1024s, dim=0)
-        if CONFIG.SA.TYPE == 'dsa':
-            framewise_shapes, mean_shapes, videowise_shapes = self.shape_agg(shape_1024s)
-            mean_shape_logits = self.shape_classifier(mean_shapes)
-        else:
-            mean_shapes, videowise_shapes = self.shape_agg(shape_1024s)
-            mean_shape_logits = self.shape_classifier(mean_shapes)
-            betas, framewise_shapes = None, None
+        framewise_shapes, mean_shapes, videowise_shapes = self.shape_agg(shape_1024s)
+        mean_shape_logits = self.shape_classifier(mean_shapes)
         return betas, framewise_shapes, mean_shape_logits, videowise_shapes
 
     def fusion(self, app_feature, shape_feature):

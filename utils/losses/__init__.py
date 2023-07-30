@@ -49,10 +49,7 @@ def compute_loss(config,
                  fused_feature, 
                  fused_logits):
     
-    if betas is not None:
-        shape1_mse = criterion_shape_mse(framewise_shape, betas)
-    else:
-        shape1_mse = 0.
+    shape1_mse = criterion_shape_mse(framewise_shape, betas)
     shape1_id_loss = criterion_cla(mean_shape_logits, pids)
 
     fused_id_loss = criterion_cla(fused_logits, pids)

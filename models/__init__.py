@@ -32,7 +32,8 @@ def build_models(config, num_ids: int = 150, train=True):
         if config.SA.TYPE == 'asa':
             shape_agg = ASA(
                 rnn_size=config.SA.ASA.HIDDEN_SIZE, 
-                input_size=config.SA.NUM_SHAPE_PARAMETERS, 
+                input_size=1024,
+                num_shape_params=config.SA.NUM_SHAPE_PARAMETERS, 
                 num_layers=config.SA.ASA.NUM_LAYERS, 
                 output_size=config.SA.NUM_SHAPE_PARAMETERS, 
                 feature_pool=config.SA.ASA.FEATURE_POOL, 

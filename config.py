@@ -70,7 +70,7 @@ class CONFIG:
         EPSILON = 0.1
         MOMENTUM = 0.
 
-        SHAPE_LOSS_WEIGHT = 0.5
+        SHAPE_LOSS_WEIGHT = 0.1
         FUSED_LOSS_WEIGHT = 1
 
     @dataclass
