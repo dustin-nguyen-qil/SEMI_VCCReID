@@ -1,5 +1,4 @@
 from dataclasses import dataclass
-from torchvision import transforms as T
 
 @dataclass
 class CONFIG:
@@ -46,22 +45,8 @@ class CONFIG:
             AGG_FEATURE_DIM = 2048 + 10
 
     @dataclass
-    class GAITSET:
-        IN_CHANNELS = [1, 32, 64, 128]
-        SEQUENCE_LENGTH = [[4, 4]]
-
-        @dataclass
-        class SEPARATE_FC:
-            PART_NUM = 62
-            IN_CHANNELS = 128
-            OUT_CHANNELS = 256
-
-        BIN_NUM = [16, 8, 4, 2, 1]
-
-
-    @dataclass
-    class SA:
-        TYPE = 'asa' # asa, dsa 
+    class SA: # shape aggregation method
+        TYPE = 'asa'
         NUM_FRAME = 8
         NUM_SHAPE_PARAMETERS = 10
         
@@ -79,16 +64,13 @@ class CONFIG:
         CLA_LOSS = 'crossentropy'
         CLA_S = 16.
         CLA_M = 0.
-        CLOTHES_CLA_LOSS = 'cosface'
         PAIR_LOSS = 'triplet'
         PAIR_S = 16.
         PAIR_M = 0.3
         EPSILON = 0.1
         MOMENTUM = 0.
 
-        APP_LOSS_WEIGHT = 1
         SHAPE_LOSS_WEIGHT = 0.5
-        SHAPE2_LOSS_WEIGHT = 1
         FUSED_LOSS_WEIGHT = 1
 
     @dataclass
@@ -107,4 +89,4 @@ class CONFIG:
 
         START_EPOCH = 0
         MAX_EPOCH = 120
-        RESUME = None
+        RESUME = None # add checkpoint here

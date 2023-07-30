@@ -73,7 +73,7 @@ def test(model, queryloader, galleryloader, query, gallery):
     return (standard_cmc*100, standard_mAP*100, sc_cmc*100, sc_mAP*100, cc_cmc*100, cc_mAP*100)
 
 """
-    Testing
+    Perform testing using the CNN backbone only
 """
 
 state_dict_path = osp.join(CONFIG.METADATA.SAVE_PATH, model_name)
