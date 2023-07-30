@@ -32,7 +32,7 @@ This baseline currently supports two public VCCRe-ID datasets: **VCCR** and **CC
 
 ## 2. Running instructions
 
-### Getting started
+### 2.1. Getting started
 
 #### Create virtual environment
 
@@ -57,7 +57,7 @@ Next, install the dependencies by running
 pip install -r requirements.txt
 ```
 
-### Data Preparation
+### 2.2. Data Preparation
 
 1. Download the datasets VCCR and CCVID following download links above
 2. You need the pickle files containing the paths to sequence images, clothes id, identity and camera id of the sequences. To do this:
@@ -68,11 +68,13 @@ pip install -r requirements.txt
 python datasets/prepare.py --root "/media/dustin/DATA/Research/Video-based ReID" --dataset_name vccr
 ```
 
-### Configuration options
+### 2.3. Run training and testing
+
+#### Configuration options
 
 Go to `./config.py` to modify configurations if needed: Dataset (VCCR or CCVID), number of epochs, batch size learning rate, CNN backbone (according to model names above), etc.
 
-### Run baseline
+#### Preparation
 
 Create a folder named `work_space` as below.
 
@@ -86,8 +88,7 @@ work_space
 |--- tsm
 main.sh
 ```
-
-#### Run training and testing
+#### Run 
 
 ```bash
 bash main.sh
@@ -99,7 +100,7 @@ bash main.sh
 
 If you want to train from checkpoint, add checkpoint path to RESUME in `config.py`. 
 
-#### Run evaluation only
+### 2.4. Run evaluation only
 
 - Download our pretrained model from [here](), put it in `work_space/save`.
 - Replace the path to the pretrained model in `test.py`
