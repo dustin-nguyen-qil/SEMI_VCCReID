@@ -45,17 +45,19 @@ def compute_loss(config,
                  criterion_shape_mse,
                  betas,
                  framewise_shape, 
-                 mean_shape_logits,
+                 framewise_shape_logits,
                  fused_feature, 
                  fused_logits):
     
-    shape1_mse = criterion_shape_mse(framewise_shape, betas)
-    shape1_id_loss = criterion_cla(mean_shape_logits, pids)
+    shape_mse = criterion_shape_mse(framewise_shape, betas)
+    _, seq_len, num_pids = framewise_shape_logits.shape
+    shape_pids = pids.repeat_interleave(seq_len)
+    shape_id_loss = criterion_cla(framewise_shape_logits.view(-1, num_pids), shape_pids)
 
     fused_id_loss = criterion_cla(fused_logits, pids)
     fused_pair_loss = criterion_pair(fused_feature, pids)
 
     loss = config.LOSS.FUSED_LOSS_WEIGHT * (0.5*fused_id_loss + 0.5*fused_pair_loss) + \
-            config.LOSS.SHAPE_LOSS_WEIGHT * (0.1*shape1_id_loss + 0.5*shape1_mse)
+            config.LOSS.SHAPE_LOSS_WEIGHT * (0.1*shape_id_loss + 0.8*shape_mse)
             
     return loss 

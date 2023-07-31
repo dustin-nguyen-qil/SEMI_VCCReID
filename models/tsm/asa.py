@@ -66,4 +66,4 @@ class ASA(nn.Module):
         
         videowise_shape = output
         
-        return framewise_shape, mean_shape, videowise_shape
+        return framewise_shape, videowise_shape

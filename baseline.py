@@ -19,7 +19,7 @@ class Baseline(LightningModule):
         # Build model
         # self.app_model, self.app_classifier, self.tsm, self.shape1_classifier,\
         #      self.shape2_classifier, self.fusion_net, self.id_classifier = \
-        self.app_model, self.tsm, self.shape_agg, self.shape_classifier, self.fusion_net, self.id_classifier = \
+        self.app_model, self.tsm, self.shape_agg, self.shape_classifiers, self.fusion_net, self.id_classifier = \
             build_models(CONFIG, self.dataset.num_pids)
         # Build losses
         self.criterion_cla, self.criterion_pair, self.criterion_shape_mse \
@@ -66,9 +66,24 @@ class Baseline(LightningModule):
             shape_1024s.append(shape_1024)
         betas = torch.stack(betas, dim=0)
         shape_1024s = torch.stack(shape_1024s, dim=0)
-        framewise_shapes, mean_shapes, videowise_shapes = self.shape_agg(shape_1024s)
-        mean_shape_logits = self.shape_classifier(mean_shapes)
-        return betas, framewise_shapes, mean_shape_logits, videowise_shapes
+        framewise_shapes, videowise_shapes = self.shape_agg(shape_1024s) # 16x8x10
+        framewise_shape_logits = self.optimize_shape_id(framewise_shapes)
+        return betas, framewise_shapes, framewise_shape_logits, videowise_shapes
+    
+    def optimize_shape_id(self, framewise_shapes): # get framewise shape logits and feed into ID loss
+        batch_size, seq_len, _ = framewise_shapes.shape
+        batch_framewise_shapes_list =  [list(framewise_shapes[i]) for i in range(batch_size)]
+        batch_framewise_logits_list = []
+        for batch_idx in range(batch_size):
+            framewise_logits_list = []
+            for frame_idx in range(seq_len):
+                frame_feature = framewise_shapes[batch_idx][frame_idx]
+                logits = self.shape_classifiers[frame_idx](frame_feature)
+                # Store the logits for the current frame
+                framewise_logits_list.append(logits)
+            batch_framewise_logits_list.append(framewise_logits_list)
+        final = torch.stack([torch.stack(batch_framewise_logits_list[i]) for i in range(len(batch_framewise_logits_list))])
+        return final
 
     def fusion(self, app_feature, shape_feature):
         final_feature = self.fusion_net(app_feature, shape_feature)
@@ -80,7 +95,7 @@ class Baseline(LightningModule):
         
         videowise_app, framewise_app_features = self.app_forward(clip)
         
-        betas, framewise_shapes, mean_shape_logits, videowise_shapes = self.shape_forward(framewise_app_features)
+        betas, framewise_shapes, framewise_shape_logits, videowise_shapes = self.shape_forward(framewise_app_features)
              
 
         fused_feature = self.fusion(videowise_app, videowise_shapes)
@@ -88,7 +103,7 @@ class Baseline(LightningModule):
 
         loss = compute_loss(CONFIG, pids, self.criterion_cla, self.criterion_pair,
                             self.criterion_shape_mse,
-                            betas, framewise_shapes, mean_shape_logits,
+                            betas, framewise_shapes, framewise_shape_logits,
                             fused_feature, fused_logits)
         
         acc = FM.accuracy(fused_logits, pids, 'multiclass', average='macro', num_classes=self.dataset.num_pids)

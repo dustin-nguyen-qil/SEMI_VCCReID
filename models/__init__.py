@@ -25,8 +25,8 @@ def build_models(config, num_ids: int = 150, train=True):
     if train:
         tsm = TSM(n_layers=2, hidden_size=1024, add_linear=True, use_residual=True)
         tsm = load_pretrained(tsm, 'work_space/tsm/tsm_model_wo.pth.tar')
-        for param in tsm.parameters():
-            param.requires_grad = False
+        # for param in tsm.parameters():
+        #     param.requires_grad = False
 
         # frame-wise shape aggregation
         if config.SA.TYPE == 'asa':
@@ -46,12 +46,13 @@ def build_models(config, num_ids: int = 150, train=True):
         
         fusion = FusionNet(out_features=config.MODEL.FINAL_FEATURE_DIM)
 
-        shape_classifier = Classifier(feature_dim=config.SA.NUM_SHAPE_PARAMETERS, 
-                                            num_classes=num_ids)
+        shape_classifiers = [Classifier(feature_dim=config.SA.NUM_SHAPE_PARAMETERS, 
+                                        num_classes=num_ids).cuda() for _ in range(config.SA.NUM_FRAME)]
+        
         id_classifier = Classifier(feature_dim=config.MODEL.AGG_FEATURE_DIM,
                                                     num_classes=num_ids)
 
-        return app_model, tsm, shape_agg, shape_classifier, fusion, id_classifier
+        return app_model, tsm, shape_agg, shape_classifiers, fusion, id_classifier
     else:
         return app_model
     
