@@ -50,14 +50,9 @@ class Baseline(LightningModule):
     
     def app_forward(self, clip):
         videowise_app, framewise_app_features = self.app_model(clip)
-        # app_logits = self.app_classifier(videowise_app)
-        # return videowise_app, app_logits, framewise_app_features
         return videowise_app, framewise_app_features
     
     def shape_forward(self, input):
-        # shape1_out, shape1_feature, shape2_feature = self.tsm(xcs)
-        # shape1_logits = self.shape1_classifier(shape1_feature)
-        # shape2_logits = self.shape2_classifier(shape2_feature)
         betas, shape_1024s = [], []
 
         for i in range(input.size(0)):
@@ -67,12 +62,11 @@ class Baseline(LightningModule):
         betas = torch.stack(betas, dim=0)
         shape_1024s = torch.stack(shape_1024s, dim=0)
         framewise_shapes, videowise_shapes = self.shape_agg(shape_1024s) # 16x8x10
-        framewise_shape_logits = self.optimize_shape_id(framewise_shapes)
+        framewise_shape_logits = self.optimize_shape_id_loss(framewise_shapes)
         return betas, framewise_shapes, framewise_shape_logits, videowise_shapes
     
-    def optimize_shape_id(self, framewise_shapes): # get framewise shape logits and feed into ID loss
+    def optimize_shape_id_loss(self, framewise_shapes): # get framewise shape logits and feed into ID loss
         batch_size, seq_len, _ = framewise_shapes.shape
-        batch_framewise_shapes_list =  [list(framewise_shapes[i]) for i in range(batch_size)]
         batch_framewise_logits_list = []
         for batch_idx in range(batch_size):
             framewise_logits_list = []

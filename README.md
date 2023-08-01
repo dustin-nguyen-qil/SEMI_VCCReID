@@ -67,6 +67,15 @@ pip install -r requirements.txt
 ```bash
 python datasets/prepare.py --root "/media/dustin/DATA/Research/Video-based ReID" --dataset_name vccr
 ```
+### 2.4. Run evaluation only
+If you want to see the evaluation results with our pretrained model on VCCR, follow these steps:
+
+- Download our pretrained model from [here](https://uofh-my.sharepoint.com/:u:/g/personal/dnguy222_cougarnet_uh_edu/EZrdb5AYxO5Lj4aI91HwKj4BKE8lPZ7hJ7PESALjmWUU7w?e=lCVJA9), put it in `work_space/save`.
+- Replace the path to the pretrained model in `test.py`
+- Run 
+```bash
+python test.py
+```
 
 ### 2.3. Run training and testing
 
@@ -99,15 +108,6 @@ bash main.sh
 - Testing results will be automatically saved to `work_space/output`.
 
 If you want to train from checkpoint, add checkpoint path to RESUME in `config.py`. 
-
-### 2.4. Run evaluation only
-
-- Download our pretrained model from [here](), put it in `work_space/save`.
-- Replace the path to the pretrained model in `test.py`
-- Run 
-```bash
-python test.py
-```
 
 ## Citation
 

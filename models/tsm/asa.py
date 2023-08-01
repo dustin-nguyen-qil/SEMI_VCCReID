@@ -50,7 +50,6 @@ class ASA(nn.Module):
         batch_size, seq_len, input_size = sequence.shape
 
         framewise_shape = self.layer1(sequence)
-        mean_shape = torch.mean(framewise_shape, dim=1)
         outputs, state = self.gru(framewise_shape)
 
         if self.feature_pool == 'concat':

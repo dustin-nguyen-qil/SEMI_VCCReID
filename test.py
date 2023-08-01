@@ -76,14 +76,14 @@ def test(model, queryloader, galleryloader, query, gallery):
     Perform testing using the CNN backbone only
 """
 
-state_dict_path = osp.join(CONFIG.METADATA.SAVE_PATH, model_name)
+state_dict_path = osp.join(CONFIG.METADATA.SAVE_PATH, model_name) # replace path here if using pretrained SEMI 
 
-appearance_model = Inference(CONFIG)
-appearance_model.load_state_dict(torch.load(state_dict_path), strict=False)
+model = Inference(CONFIG)
+model.load_state_dict(torch.load(state_dict_path), strict=False)
 queryloader, galleryloader, query, gallery = build_testloader()
 
 (standard_cmc, standard_mAP, sc_cmc, sc_mAP, cc_cmc, cc_mAP) = \
-    test(appearance_model, queryloader, galleryloader, query, gallery)
+    test(model, queryloader, galleryloader, query, gallery)
 
 
 print("==============================")

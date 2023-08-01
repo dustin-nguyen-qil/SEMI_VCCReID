@@ -41,7 +41,6 @@ class TSM(nn.Module):
             pretrained_dict = torch.load(pretrained)['model']
 
             self.regressor.load_state_dict(pretrained_dict, strict=False)
-            print(f'=> loaded pretrained model for Regressor from \'{pretrained}\'')
 
 
     def forward(self, input, J_regressor=None):
@@ -68,3 +67,4 @@ class TSM(nn.Module):
         pred_beta = output['theta'][:, :, 75:].reshape(seqlen, -1).detach()
 
         return pred_beta, pred_shape_1024
+

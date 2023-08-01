@@ -48,6 +48,7 @@ def compute_loss(config,
                  framewise_shape_logits,
                  fused_feature, 
                  fused_logits):
+                
     
     shape_mse = criterion_shape_mse(framewise_shape, betas)
     _, seq_len, num_pids = framewise_shape_logits.shape
