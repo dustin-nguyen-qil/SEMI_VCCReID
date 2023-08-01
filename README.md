@@ -70,7 +70,7 @@ python datasets/prepare.py --root "/media/dustin/DATA/Research/Video-based ReID"
 ### 2.4. Run evaluation only
 If you want to see the evaluation results with our pretrained model on VCCR, follow these steps:
 
-- Download our pretrained model from [here](https://uofh-my.sharepoint.com/:u:/g/personal/dnguy222_cougarnet_uh_edu/EZrdb5AYxO5Lj4aI91HwKj4BKE8lPZ7hJ7PESALjmWUU7w?e=lCVJA9), put it in `work_space/save`.
+- Download our pretrained model from [here](https://uofh-my.sharepoint.com/:u:/g/personal/dnguy222_cougarnet_uh_edu/EZrdb5AYxO5Lj4aI91HwKj4BKE8lPZ7hJ7PESALjmWUU7w?e=lCVJA9) (password: dustinqil), put it in `work_space/save`.
 - Replace the path to the pretrained model in `test.py`
 - Run 
 ```bash
