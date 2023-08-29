@@ -76,6 +76,7 @@ If you want to see the evaluation results with our pretrained model on VCCR, fol
 ```bash
 python test.py
 ```
+- Evaluation results will be saved to `work_space/output`
 
 ### 2.4. Run training and testing
 
