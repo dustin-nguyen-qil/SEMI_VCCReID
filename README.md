@@ -63,7 +63,7 @@ pip install -r requirements.txt
 ```bash
 python datasets/prepare.py --root "/media/dustin/DATA/Research/Video-based ReID" --dataset_name vccr
 ```
-### 2.4. Run evaluation only
+### 2.3. Run evaluation only to reproduce results presented in the paper
 If you want to see the evaluation results with our pretrained model on VCCR, follow these steps:
 
 - Download our pretrained model from [here](https://uofh-my.sharepoint.com/:u:/g/personal/dnguy222_cougarnet_uh_edu/EZrdb5AYxO5Lj4aI91HwKj4BKE8lPZ7hJ7PESALjmWUU7w?e=lCVJA9) (password: dustinqil), put it in `work_space/save`.
@@ -72,8 +72,9 @@ If you want to see the evaluation results with our pretrained model on VCCR, fol
 ```bash
 python test.py
 ```
+- Evaluation results will be saved to `work_space/output`
 
-### 2.3. Run training and testing
+### 2.4. Run training and testing
 
 #### Configuration options
 
@@ -105,7 +106,7 @@ bash main.sh
 
 If you want to train from checkpoint, add checkpoint path to RESUME in `config.py`. 
 
-<!-- ## Citation
+## Citation
 
 If you find this repo helpful, please cite:
 
@@ -116,7 +117,7 @@ If you find this repo helpful, please cite:
   booktitle = {IEEE/CVF Winter Conference on Applications of Computer Vision (WACV)},
   year = {2024}
 }
-``` -->
+```
 
 ## Acknowledgement
 
