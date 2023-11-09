@@ -80,7 +80,7 @@ class VideoDataset(Dataset):
 
         # return clip, pid, camid, clothes_id, xc, beta
         return clip, pid, camid, clothes_id
-    
+
         
         
 class TestDataset(Dataset):
@@ -140,7 +140,6 @@ class TestDataset(Dataset):
         
         if self.temporal_transform is not None:
             img_paths = self.temporal_transform(img_paths)
-        
         clip = self.loader(img_paths)
 
         if self.spatial_transform is not None:

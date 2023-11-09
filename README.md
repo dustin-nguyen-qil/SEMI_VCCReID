@@ -1,10 +1,6 @@
-# SEMI: Temporal 3D Shape Modeling for Video-based Cloth-changing Person Re-Identification [WACV 2024]
+# SEMI: Temporal 3D Shape Modeling for Video-based Cloth-changing Person Re-Identification
 
-This repository contains official implementation for the paper: [Temporal 3D Shape Modeling for Video-based Cloth-changing Person Re-Identification](). 
-
-#### Quantitative Results
-
-[//]: <> add table of quantitative results here.
+This repository contains official implementation for the paper: Temporal 3D Shape Modeling for Video-based Cloth-changing Person Re-Identification [WACV2024 - Realworld Surveillance Workshop]. 
 
 ## 1. Features
 
@@ -109,7 +105,7 @@ bash main.sh
 
 If you want to train from checkpoint, add checkpoint path to RESUME in `config.py`. 
 
-## Citation
+<!-- ## Citation
 
 If you find this repo helpful, please cite:
 
@@ -120,7 +116,7 @@ If you find this repo helpful, please cite:
   booktitle = {IEEE/CVF Winter Conference on Applications of Computer Vision (WACV)},
   year = {2024}
 }
-```
+``` -->
 
 ## Acknowledgement
 

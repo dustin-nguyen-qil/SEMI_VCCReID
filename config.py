@@ -10,7 +10,7 @@ class CONFIG:
     @dataclass
     class DATA:
         ROOT = 'data'
-        DATASET = 'vccr' # vccr, ccvid
+        DATASET = 'vccr' # vccr, ccvid, ccpg
         TRAIN_BATCH = 16
         SAMPLING_STEP = 64
         NUM_WORKERS = 4
@@ -35,7 +35,7 @@ class CONFIG:
             CONTRACTIVE_ATT = True
 
         RES4_STRIDE = 1
-        APP_MODEL = 'c2dres50' # c2d, ap3d, i3d, ap3dnl, nl
+        APP_MODEL = 'c2dres50' # c2dres50, ap3dres50, i3dres50, ap3dnlres50, nlres50
         APP_FEATURE_DIM = 2048
         FINAL_FEATURE_DIM = 512
         AGG = 'CONCAT'
@@ -78,15 +78,28 @@ class CONFIG:
 
         @dataclass
         class LR_SCHEDULER:
-            STEPSIZE = 40
+            STEPSIZE = 20
             DECAY_RATE = 0.1
 
         @dataclass
         class OPTIMIZER:
             NAME = 'adam'
-            LR = 0.0005
+            LR = 0.0003
             WEIGHT_DECAY = 5e-4
-
+        """
+            pose: 'front' #standard #wo_face # back # size # front_size # front_back # side_back 
+            cloth: one_cloth, two_cloth, three cloth, up, down, al
+        """
+        TYPE = 'pose' # pose, cloth
+        TRAIN_MODE = 'standard' 
         START_EPOCH = 0
-        MAX_EPOCH = 120
+        MAX_EPOCH = 60
         RESUME = None # add checkpoint here
+    
+    @dataclass
+    class TEST:
+        TEST_MODE = 'all'
+        TRAIN_SET = 'vccr'
+        TEST_SET = 'vccr'
+        
+        

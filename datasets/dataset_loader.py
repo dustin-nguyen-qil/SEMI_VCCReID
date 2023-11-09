@@ -44,7 +44,14 @@ def build_trainloader():
     """
     Build Train Loader
     """
-    train_data_path = osp.join(config.DATA.ROOT, config.DATA.DATASET, 'train.pkl')
+    train_modes = [
+        'front', 'back', 'size', 'front_size', 'front_back', 'side_back',
+        'one_cloth', 'two_cloth', 'three_cloth', 'up', 'down', 'all'
+    ]
+    if config.TRAIN.TRAIN_MODE == 'standard':
+        train_data_path = osp.join(config.DATA.ROOT, config.DATA.DATASET, 'train.pkl')
+    else:
+        train_data_path = osp.join(config.DATA.ROOT, config.DATA.DATASET, config.TRAIN.TYPE, f'train_{config.TRAIN.TRAIN_MODE}.pkl')
 
     train = VideoDataset(
         train_data_path, 
@@ -68,9 +75,17 @@ def build_testloader():
     """
     Build query and gallery loader
     """
+    test_modes = [
+        'front', 'back', 'size', 'all'
+        'up', 'down', 'all'
+    ]
+    if config.TEST.TEST_MODE == 'all':
+        query_data_path = osp.join(config.DATA.ROOT, config.DATA.DATASET, 'query.pkl')
+        gallery_data_path = osp.join(config.DATA.ROOT, config.DATA.DATASET, 'gallery.pkl')
+    else:
+        query_data_path = osp.join(config.DATA.ROOT, config.DATA.DATASET, f'query_{config.TEST.TEST_MODE}.pkl')
+        gallery_data_path = osp.join(config.DATA.ROOT, config.DATA.DATASET, f'gallery_{config.TEST.TEST_MODE}.pkl')
 
-    query_data_path = osp.join(config.DATA.ROOT, config.DATA.DATASET, 'query.pkl')
-    gallery_data_path = osp.join(config.DATA.ROOT, config.DATA.DATASET, 'gallery.pkl')
 
     query = TestDataset(
         query_data_path,

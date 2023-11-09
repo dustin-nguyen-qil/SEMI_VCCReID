@@ -17,8 +17,7 @@ from torch import nn
 
 
 def build_model_name():
-    model_name = f'{CONFIG.DATA.DATASET}_{CONFIG.TRAIN.MAX_EPOCH}_{CONFIG.TRAIN.OPTIMIZER.LR}_{CONFIG.DATA.TRAIN_BATCH}_{CONFIG.MODEL.APP_MODEL}_{CONFIG.SA.TYPE}'
-    model_name += '_newloss_unfrozen.pth'
+    model_name = f'{CONFIG.DATA.DATASET}_{CONFIG.TRAIN.MAX_EPOCH}_{CONFIG.TRAIN.OPTIMIZER.LR}_{CONFIG.DATA.TRAIN_BATCH}_{CONFIG.MODEL.APP_MODEL}_{CONFIG.TRAIN.TYPE}_{CONFIG.TRAIN.TRAIN_MODE}.pth'
     return model_name
 
 def RmBN2dAffine(model):
