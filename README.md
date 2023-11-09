@@ -114,7 +114,7 @@ If you find this repo helpful, please cite:
 @inproceedings{vuong2024semi,
   title={Temporal 3D Shape Modeling for Video-based Cloth-changing Person Re-Identification},
   author={Nguyen, Vuong and Shah, Shishir and Mantini, Pranav},
-  booktitle = {IEEE/CVF Winter Conference on Applications of Computer Vision (WACV)},
+  booktitle = {IEEE/CVF Winter Conference on Applications of Computer Vision (WACV) Workshop},
   year = {2024}
 }
 ```
