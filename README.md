@@ -1,6 +1,6 @@
 # SEMI: Temporal 3D Shape Modeling for Video-based Cloth-changing Person Re-Identification
 
-This repository contains official implementation for the paper: Temporal 3D Shape Modeling for Video-based Cloth-changing Person Re-Identification [WACV2024 - Realworld Surveillance Workshop]. 
+This repository contains official implementation for the paper: **Temporal 3D Shape Modeling for Video-based Cloth-changing Person Re-Identification (SEMI)** [WACV2024 - 4th Real-world Surveillance Workshop](https://vap.aau.dk/rws-wacv2024/). 
 
 ## 1. Features
 
@@ -112,8 +112,8 @@ If you find this repo helpful, please cite:
 
 ```bash
 @inproceedings{vuong2024semi,
-  title={Temporal 3D Shape Modeling for Video-based Cloth-changing Person Re-Identification},
-  author={Nguyen, Vuong and Shah, Shishir and Mantini, Pranav},
+  title={Temporal 3D Shape Modeling for Video-based Cloth-Changing Person Re-Identification},
+  author={Vuong Nguyen and Shishir Shah and Pranav Mantini},
   booktitle = {IEEE/CVF Winter Conference on Applications of Computer Vision (WACV) Workshop},
   year = {2024}
 }
