@@ -1,4 +1,4 @@
-# SEMI: Temporal 3D Shape Modeling for Video-based Cloth-changing Person Re-Identification
+# Temporal 3D Shape Modeling for Video-based Cloth-Changing Person Re-Identification (SEMI)
 
 This repository contains official implementation for the paper: **Temporal 3D Shape Modeling for Video-based Cloth-changing Person Re-Identification (SEMI)** [WACV2024 - 4th Real-world Surveillance Workshop](https://vap.aau.dk/rws-wacv2024/). 
 
