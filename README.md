@@ -111,11 +111,13 @@ If you want to train from checkpoint, add checkpoint path to RESUME in `config.p
 If you find this repo helpful, please cite:
 
 ```bash
-@inproceedings{vuong2024semi,
-  title={Temporal 3D Shape Modeling for Video-based Cloth-Changing Person Re-Identification},
-  author={Vuong Nguyen and Shishir Shah and Pranav Mantini},
-  booktitle = {IEEE/CVF Winter Conference on Applications of Computer Vision (WACV) Workshop},
-  year = {2024}
+@InProceedings{Nguyen_2024_WACV,
+    author    = {Nguyen, Vuong D. and Mantini, Pranav and Shah, Shishir K.},
+    title     = {Temporal 3D Shape Modeling for Video-Based Cloth-Changing Person Re-Identification},
+    booktitle = {Proceedings of the IEEE/CVF Winter Conference on Applications of Computer Vision (WACV) Workshops},
+    month     = {January},
+    year      = {2024},
+    pages     = {173-182}
 }
 ```
 
