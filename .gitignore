@@ -1,4 +1,5 @@
 data/
 work_space/
 .git-credentials
+__pycache__
 __pycache__/
